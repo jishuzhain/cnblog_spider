@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【Java框架型项目从入门到装逼】第十四节  查询用户列表展现到页面
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>这一节，我们来实现一下用户列表搜索，最终的效果如下：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-843dd51b5c87bf7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>这边我们要使用easyUI给我们提供的datagrid组件。</p>
+<p><strong>HTML结构如下</strong></p>
+<pre><code>&lt;!-- 数据列表 --&gt;
+&lt;table id="grid0" class="easyui-datagrid" title="用户列表" style="width:980px;height:550px"
+        data-options="pagination:true,pageSize:10,rownumbers:true,fitColumns:true,
+        singleSelect:false,collapsible:false,url:'getUsers.do'"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th data-options="field:'ck',checkbox:true"&gt;&lt;/th&gt;
+            &lt;th data-options="field:'username',width:80"&gt;用户名&lt;/th&gt;
+            &lt;th data-options="field:'password',width:100"&gt;密码&lt;/th&gt;
+            &lt;th data-options="field:'name',width:120"&gt;姓名&lt;/th&gt;
+            &lt;th data-options="field:'sex',width:120" &gt;性别&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+&lt;/table&gt;</code></pre>
+<p>注意，姓名和性别的field值已经变更，和数据库保持一致，这一点和之前的代码是不一样的。至于datagrid的具体用法，因为本系列课程不是专门讲前端框架EasyUI，所以我也就不多阐述了。感兴趣的童鞋可以去参考EasyUI的官方文档。</p>
+<p>我们这边看到，在 <strong>data-options</strong> 中设置了 <strong>url</strong> 为 <strong>getUsers.do</strong> 。这个代表在刷新页面的时候，就会自动去寻找对应的Controller，然后加载数据。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-c7f69efbea1eee0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>如图，我们还设置了分页，每页条数为10。</p>
+<p>现在我们来看一下控制器部分：</p>
+<pre><code>    @RequestMapping("/getUsers")
+    @ResponseBody
+    public Map&lt;String,Object&gt; getUsers(HttpServletRequest request , HttpServletResponse response,Student student){
+        System.out.println("开始搜索用户...");
+        
+        int page = Integer.parseInt(request.getParameter("page")); //第几页
+        int rows = Integer.parseInt(request.getParameter("rows")); //每页多少行
+        
+        System.out.println(student);
+        
+        Map&lt;String,Object&gt; pageBean = userService.getUsers(student,page,rows);
+        
+        return pageBean;
+    }</code></pre>
+<p>注意，我们在参数列表中加了一个Student：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-9a202a0b935051af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>为什么要添加这个参数呢，那是因为我们最终会通过form表单输入用户名和姓名进行一个模糊查询，所以要在controller层做一个数据绑定。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-f5d114a65ca86508.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>再看这两个东西，因为datagrid已经设置了分页，所以加载数据的时候就会默认传过来这两个参数，它会自己告诉controller本次请求要查询的是第几页，每页多少条数据？</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-dbd6589a0c1d439c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+接下来，我们调用service层的方法，因为是分页查询，所以我们不仅仅要传入需要查询的条件，还要传入分页参数。</p>
+<p>最终，我们走到了dao层的方法：</p>
+<pre><code>    @Override
+    public Map&lt;String, Object&gt; getUsers(Student student, int page, int rows) {
+        String sql = "select * from t_student where 1=1 ";
+        List args = new ArrayList();
+        
+        
+        if(student.getId() != 0){
+            sql += " and id = ?"; 
+            args.add(student.getId());
+        }
+        
+        
+        if(student.getUsername() != null &amp;&amp; !"".equals(student.getUsername())){
+            sql += " and username = ?"; 
+            args.add(student.getUsername());
+        }
+        
+        if(student.getName() != null &amp;&amp; !"".equals(student.getName())){
+            sql += " and name = ?"; 
+            args.add(student.getName());
+        }
+        
+        SimpleDao dao = new SimpleDao();
+        Map&lt;String, Object&gt; pageBean = dao.queryForPage(sql, page, rows, args.toArray());
+        
+        return pageBean;
+    }</code></pre>
+<p>相信只要你有一定的java基础和jdbc基础，就一定能看懂这个方法做了些什么？没错，我们挨个判断查询条件，如果有传过来，就拼接到sql语句中去。最后，用<strong>queryForPage</strong>方法去查询一个分页对象过来。</p>
+<p>现在，我们来测试一下，刷新index.html。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-037313a2644f6fd4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>可以看到，数据成功的载入了我们的<strong>datagrid</strong>！</p>
+<p>接下来，我们给搜索按钮添加点击事件，达到条件查询的目的：</p>
+<pre><code>//搜索用户
+function searchUser(){
+    var username = $('#username_search').val(); //用户名
+    var name = $('#nickname_search').val(); //姓名
+    
+    $("#grid0").datagrid('load',{
+        username : username,
+        name : name
+    });
+    
+}</code></pre>
+<p>效果（截图不清晰，请下载后观看）：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-f81f6230cb1e49f0.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>那如果是模糊查询的话，又该如何实现呢？这个就作为一个小小的作业留给大家，在下一讲我们来揭开答案！</p>
+<p><a href="https://www.jianshu.com/p/1bb7cfa425ba">我要下载源码</a></p>
+<p>您的支持是我写作的最大动力：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-86f89e1290a35202.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+</div>
+</body>
+</html>
+

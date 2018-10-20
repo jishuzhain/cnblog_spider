@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+你可曾见过如此简单粗暴的JavaScript解说 -- if 判断的正确打开方式？
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>在JavaScript中，对于 <strong>if else</strong> 的逻辑判断你肯定非常熟悉，本文罗列了几种你不一定知道的简写方式，仅供参考。</p>
+<p>例子：<br/>
+已知小明考了68分，小于60分为不及格，大于60分为及格，问：小明是否通过了考试？</p>
+<h3 id="传统的写法">1.传统的写法</h3>
+<pre><code>if(score &lt; 60){
+    alert('不及格');
+}else{
+    alert('及格');
+}</code></pre>
+<p>这没什么好说的，最基本的<strong>if else</strong>语法。可读性应该是最好的。</p>
+<h3 id="利用三目运算符来进行判断">2.利用三目运算符来进行判断</h3>
+<pre><code>score &lt; 60 ? alert('不及格') : alert('及格') ;</code></pre>
+<p>这种写法应该还算是比较多见的，而且，如果只有单纯的一个if判断的话，可读性也不是很差。</p>
+<h3 id="利用-来判断">3.利用&amp;&amp; 来判断</h3>
+<pre><code>score &lt; 60 &amp;&amp; alert('不及格') ;
+score &gt;= 60 &amp;&amp; alert('及格') ;</code></pre>
+<p><strong>&amp;&amp;的用法 </strong>： 如果左边的结果为真，那么运行右边的表达式，如果右边的也为真，那么就返回真。其中，只要有一个为假，结果就是假。并且，一旦左边的结果为假，右边的就不执行了。</p>
+<p>这里就是取了一个巧，因为我只是想要执行右边的表达式，无所谓返回值是什么。</p>
+<p>那么，如果score &lt; 60 为真，我不管三七二十一，都去执行一下右边的代码。我们的目的已经达到了。</p>
+<p>这不就相当于这样吗：</p>
+<pre><code>if(score &lt; 60 == true){
+   alert('不及格') ;
+}
+
+if(score &gt;= 60 == true){
+   alert('及格') ;
+}</code></pre>
+<p>简写：</p>
+<pre><code>if(score &lt; 60){
+   alert('不及格') ;
+}
+
+if(score &gt;= 60){
+   alert('及格') ;
+}</code></pre>
+<p>就是说，一旦 ( ) 里面的表达式为真，就执行 { } 里面的内容。否则就不执行。</p>
+<h3 id="利用-来判断-1">4.利用 || 来判断</h3>
+<pre><code>score &lt; 60  ||  alert('及格') ;
+score &gt;= 60  ||  alert('不及格') ;</code></pre>
+<p><strong>|| 的用法 </strong>： 如果左边的结果为真，那么直接返回true，右边的就忽略了！</p>
+<p>如果左边为假，那么就运行右边的，看看右边的结果如何？如果右边为真，就返回真，否则返回假。</p>
+<p>也就是说，不管右边的结果怎样，只要左边为假了，右边就无论如何会被执行一次的。这边也就是利用这个原理，相当于这样：</p>
+<pre><code>if(score &lt; 60 == false){
+   alert('及格') ;
+}
+
+if(score &gt;= 60 == false){
+   alert('不及格') ;
+}</code></pre>
+<p>如果分数 &lt; 60 是假的，是骗你的，不就是说分数 &gt; 60 才是真相吗?哦，超过60分就是及格了，所以alert出来的是及格。</p>
+<p>如果分数 &gt;= 60 是假的，是骗你的，不就是说分数 &lt; 60 才是真相吗?哦，不满60分就是不及格了，所以alert出来的是不及格。</p>
+<p>这样应该说的比较清楚了吧。</p>
+<p>再说得白一点，就是：<br/>
+<strong>你要么给我 &lt; 60 ,要么给我 alert('及格') ;</strong><br/>
+<strong>你要么给我 &gt;= 60 ,要么给我 alert('不及格') ;</strong></p>
+<h3 id="实战演练">5.实战演练</h3>
+<p>我们来一个小案例，看看可以怎么运用这些知识点？</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset="UTF-8"&gt;
+        &lt;script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"&gt;&lt;/script&gt;
+        &lt;style type="text/css"&gt;
+            .box1 {
+                height:200px;
+                width:300px;
+                border: 1px solid #666;
+            }
+            
+            .box2 {
+                background: green;
+            }
+            
+        &lt;/style&gt;
+        &lt;script&gt;
+            
+        &lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div id='myBox' class='box1'&gt;&lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-3a06d39f51c3250e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>我们引入了jQuery，现在希望自己来编写一个toggelClass，如何实现呢？</p>
+<p>当我们点击这个div的时候，就自动将class换成box2。再次点击的时候，就把box2的样式去掉，依此循环。</p>
+<p>上代码：</p>
+<pre><code>$('document').ready(function(){
+    function toggleClass(dom , className){
+        //判断该class是否已经存在
+        if(dom.hasClass(className)){
+            //如果存在，就去掉这个class
+            dom.removeClass(className);
+        }else{
+            //如果不存在，就加上这个class
+            dom.addClass(className);
+        }
+    }
+    
+    $('#myBox').click(function(){
+        toggleClass($(this),'box2');
+    });
+});</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-5e6fd91dc5b2050a.gif?imageMogr2/auto-orient/strip"/></p>
+<p>我猜想，jQuery对toggleClass的实现应该也差不多是这个意思。现在，我们考虑做如下简化：</p>
+<p>第一种方式，用三目运算符简化：</p>
+<pre><code>function toggleClass(dom , className){
+    dom.hasClass(className) ? dom.removeClass(className) : dom.addClass(className);
+}</code></pre>
+<p>第二种方式，用&amp;&amp; 和 ||：</p>
+<pre><code>!dom.hasClass(className) &amp;&amp; dom.addClass(className) || dom.removeClass(className);</code></pre>
+<p>可能有点绕，而且我也不是很推荐这种方式，一般来说，这种方式用于一些给变量赋值的场合。</p>
+<p>我大概解释一下：</p>
+<pre><code>!dom.hasClass(className) &amp;&amp; dom.addClass(className) </code></pre>
+<p>这表示如果dom元素不包含你指定的className，那么 !dom.hasClass(className) 是真，于是无论如何我都要执行右边的代码： dom.addClass(className) ，也就是说，给dom元素添加这个class。</p>
+<p>这样一来，</p>
+<pre><code>!dom.hasClass(className) &amp;&amp; dom.addClass(className) </code></pre>
+<p>这句话是不是已经成立了，OK，那么因为右边是 || ， 左边都已经成立了，那么我右边的代码是不是可以不执行了呀？</p>
+<p>好的，第二次点击：</p>
+<p>!dom.hasClass(className)的意思是说，你这个dom元素是不是没有指定的class啊，不，我们刚才已经添加了，所以是有的。</p>
+<p>那么，这句话就不成立了，&amp;&amp; 左边的是假，那么右边的就不执行了、</p>
+<p>就是说：</p>
+<pre><code> dom.addClass(className) </code></pre>
+<p>这句话不执行了。</p>
+<p>综合来看：</p>
+<pre><code>!dom.hasClass(className) &amp;&amp; dom.addClass(className) </code></pre>
+<p>这个条件就是不成立的。</p>
+<p>好的， || 左边的不成立，是不是说，我们无论如何都要执行一下||右边的代码呢？</p>
+<p>恩， dom.removeClass(className) 就被执行了。</p>
+<p>本章结束 ...</p>
+<p>剽悍一小兔，电气自动化毕业。<br/>
+参加工作后对计算机感兴趣，深知初学编程之艰辛。<br/>
+希望将自己所学记录下来，给初学者一点帮助。</p>
+<p>我的个人博客：<a class="uri" href="http://s-335245.gotocdn.com:8080/index.html">http://s-335245.gotocdn.com:8080/index.html</a></p>
+<p>简书地址：<a class="uri" href="http://www.jianshu.com/users/8875b36caaec/latest_articles">http://www.jianshu.com/users/8875b36caaec/latest_articles</a></p>
+<p><strong>免责声明</strong>： 博客中所有的图片素材均来自百度搜索，仅供学习交流，如有问题请联系我，侵立删，谢谢。</p>
+</div>
+</body>
+</html>
+

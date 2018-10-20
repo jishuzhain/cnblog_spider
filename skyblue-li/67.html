@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第四节 -自己 DIY 一个数据库管理工具
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>本节介绍如何自己DIY一个数据库管理工具，可以在页面输入sql 进行简单的增删改查操作。</p>
+<p>首先，找到xampp的安装目录，打开htdocs：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-21f3c0cb56962abd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>新建一个php文件，名称为 <strong>mysqladmin.php</strong><br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-c8b55c52df88a4cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-f04577572cadce99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h1 id="编写php服务器代码">1.编写php服务器代码</h1>
+<h2 id="写上php标签">1.1 写上php标签</h2>
+<p>首先，还是在这个页面，要写php代码，就需要有一个php标签：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-5bb07230ed18f254.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>我们的php代码要写在这个标签内。</p>
+<h2 id="数据库连接操作">1.2 数据库连接操作</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-b55c0296a75f6210.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>xampp安装的mysql默认没有密码，不写就行。</p>
+<h2 id="获取form表单传过来的sql语句">1.3 获取form表单传过来的sql语句</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-b8074ab0f55dfd01.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="用mysql_query函数执行传过来的sql语句">1.4 用mysql_query函数执行传过来的sql语句</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-ec5ffe8d99336117.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>目前为止，代码已经足以对数据库进行增删改，接下来，我们来设计查询sql的实现。</p>
+<h2 id="用split函数分割sql语句获取表名">1.5 用split函数分割sql语句，获取表名</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-60109b911a725403.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="通过表名去获取这张表所有的列并且把列名用一个数组装起来">1.6 通过表名去获取这张表所有的列，并且把列名用一个数组装起来</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-9ab6f2795c8a2ce4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="去查询sql中获取的结果集展示到页面">1.7 去查询sql中获取的结果集，展示到页面</h2>
+<pre><code>if($tableName){
+            
+            $query = mysql_query("select COLUMN_NAME from information_schema.COLUMNS where  TABLE_NAME = '$tableName';") or die("&lt;p style='color:red'&gt;sql报错，错误信息为 ======&gt; ".mysql_error()."&lt;/p&gt;");
+             
+            //对结果集进行遍历 -- mysql_fetch_array
+            
+            
+            $columns = array(); //储存这张表中所有的字段名称
+            $count = 0; //记录当前的下标
+            
+            
+            echo "&lt;table&gt;";
+            
+            echo "&lt;tr&gt;";
+            
+            while($row = mysql_fetch_array($query)){
+                
+                $columns[$count] =  $row["COLUMN_NAME"];
+                
+                echo "&lt;td&gt;" . $row["COLUMN_NAME"] . "&lt;/td&gt;";
+                
+                $count = $count + 1;
+                
+            }
+            
+            echo "&lt;/tr&gt;";
+            
+            //echo sizeof($columns);
+            
+            
+            
+            
+            
+            $query_02 = mysql_query($sql) or die("&lt;p style='color:red'&gt;sql报错，错误信息为 ======&gt; ".mysql_error()."&lt;/p&gt;");
+            
+            
+            while($row = mysql_fetch_array($query_02)){
+                
+                echo "&lt;tr&gt;";
+                for($i=0;$i&lt;sizeof($columns);$i++){
+                    echo "&lt;td&gt;" . $row[$columns[$i]] . "&lt;/td&gt;";
+                }
+                echo "&lt;/tr&gt;";
+                
+            }
+            
+            echo "&lt;/table&gt;";
+            
+            
+        }
+        
+    } </code></pre>
+<p>演示效果如下：</p>
+<p>访问地址：<a class="uri" href="http://localhost:8080/mysqladmin.php">http://localhost:8080/mysqladmin.php</a></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-abc37bcacef0267e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>完整的mysqladmin.php 代码：</p>
+<pre><code>&lt;form action="mysqladmin.php" method="post" &gt;
+
+    &lt;textarea cols="80" rows="10" id="sql" name="sql"&gt;&lt;/textarea&gt;
+
+    &lt;br&gt;
+
+    &lt;input type="submit" value="执行"  /&gt; 
+
+&lt;/form&gt;
+
+&lt;style&gt;
+
+    th {background: #eaeaea}
+    td {border:1px solid #ccc;padding:2px 10px;}
+    tr:hover {background: skyblue}
+&lt;/style&gt;
+
+&lt;?php
+    
+    //1、连接数据库
+    $conn = mysql_connect("localhost","root","");
+
+    //2、选择test数据库
+    $db = mysql_select_db("test",$conn);
+
+    //3、设置编码集
+    mysql_query("set names utf8");
+
+    
+
+    $sql = "";
+
+    if(isset($_POST["sql"]) &amp;&amp; $_POST["sql"] != null){
+        $sql = $_POST["sql"];
+        echo "&lt;p&gt;您执行的sql为：$sql &lt;/p&gt;";   
+
+        echo "&lt;script&gt;document.getElementById('sql').value='".$sql."'&lt;/script&gt;";
+
+        //开始真的执行sql
+
+        $query_origin = mysql_query($sql) or die("&lt;p style='color:red'&gt;sql报错，错误信息为 ======&gt; ".mysql_error()."&lt;/p&gt;");
+
+        echo "&lt;p style='color:green'&gt;执行成功！&lt;/p&gt;";
+
+        /*
+            如果是update语句，则返回一个数字
+            如果是select语句，则返回一个结果集，比如：Resource id #6
+        */
+
+        //echo $query;
+        //echo strpos($query."",'Resource');
+
+
+        //select COLUMN_NAME from information_schema.`COLUMNS` where TABLE_NAME = 'tm_users';
+        
+        //根据sql语句获取表名
+        $arr = split(" ",$sql);
+        $tableName = "";
+
+        for($i=0;$i&lt;sizeof($arr);$i++){
+            if($arr[$i] == "from"){
+                $tableName = $arr[$i+1];
+                break;
+            }
+        }
+        
+        //echo $tableName;
+
+        //如果表名存在，就去查询这个表中所有的字段
+        if($tableName){
+            $query = mysql_query("select COLUMN_NAME from information_schema.`COLUMNS` where TABLE_NAME = '$tableName'") or die("&lt;p style='color:red'&gt;sql报错，错误信息为 ======&gt; ".mysql_error()."&lt;/p&gt;");
+            
+            $columns = array();
+            $count = 0;
+
+
+            echo "&lt;table cellpadding=0 cellspacing=0&gt;&lt;tr&gt;";
+
+            while($row=mysql_fetch_array($query)){  
+                
+                $columns[$count++] = $row['COLUMN_NAME'];
+
+            }   
+
+            //遍历数组
+            for($i=0;$i&lt;sizeof($columns);$i++){
+                echo "&lt;th&gt;$columns[$i]&lt;/th&gt;";
+            }
+
+            echo "&lt;/tr&gt;&lt;tr&gt;";
+            //然后去这张表里面查询
+            while($row=mysql_fetch_array($query_origin)){
+                //遍历这张表的列名，然后对应从行中取值
+                for($i=0;$i&lt;sizeof($columns);$i++){
+                    echo "&lt;td&gt;" . $row["$columns[$i]"] . "&lt;/td&gt;";
+                }
+                //每遍历好一行，就换行
+                echo "&lt;/tr&gt;";
+            }
+
+            echo "&lt;/table&gt;";
+
+        }
+
+
+
+        
+
+        
+
+    }
+
+    
+?&gt;</code></pre>
+</div>
+</body>
+</html>
+

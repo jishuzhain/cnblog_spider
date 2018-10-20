@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【Java框架型项目从入门到装逼】第八节 - 用EasyUI绘制主界面
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><h3 id="引入资源包">1.引入资源包</h3>
+<p>在上一节中，我们把基本的框架都搭好了，用了Spring，SPringMVC。这一节，我们先来画页面，前端框架采用EasyUI来实现。<br/>
+easyui是一种基于jQuery的用户界面插件集合，使用easyui我们就不需要写很多代码，只需要通过编写一些简单HTML标记，就可以定义用户界面。<br/>
+现在，我们把easyui需要的资源包拷贝进来。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-653264116af1442a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h3 id="绘制主界面">2.绘制主界面</h3>
+<p>界面的话，我们就用html来实现吧，在WebContent目录下新建一个页面叫index.html。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-600467124fab72f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>目录结构如下：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-fad7879a503a89d6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>代码：</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;学生管理主界面&lt;/title&gt;
+
+    &lt;!-- 引入EasyUI资源文件 --&gt;
+    &lt;link rel="stylesheet" type="text/css" href="jquery-easyui-1.3.3/themes/default/easyui.css"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="jquery-easyui-1.3.3/themes/icon.css"&gt;
+    &lt;script type="text/javascript" src="jquery-easyui-1.3.3/jquery.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="jquery-easyui-1.3.3/jquery.easyui.min.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"&gt;&lt;/script&gt;
+
+
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>现在，我们来画四个按钮：</p>
+<pre><code>   &lt;!-- 工具栏 --&gt;
+    &lt;div id="toolbar"&gt;
+        &lt;a href="javascript:openUserAddPage()" class="easyui-linkbutton" iconCls="icon-add" &gt;新增用户&lt;/a&gt;
+        &lt;a href="javascript:openUserModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" &gt;编辑用户&lt;/a&gt;
+        &lt;a href="javascript:delUser()" class="easyui-linkbutton" iconCls="icon-remove"&gt;删除用户&lt;/a&gt;
+        &lt;a href="javascript:resetPassword()" class="easyui-linkbutton" iconCls="icon-modifyPassword"&gt;密码重置&lt;/a&gt;
+    &lt;/div&gt;</code></pre>
+<p>可以看到每一个按钮都是用a标签来做的，我们给每一个a标签添加一个 <strong>easyui-linkbutton</strong> 的class，就可以实现这一效果：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-ec908511ae2af311.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>同时，每一个按钮还有一个点击事件，对应的函数我们先不写，预留一个接口。</p>
+<p>接下来，我们绘制搜索栏，到时候可以根据某些条件来查询学生数据。</p>
+<p>代码：</p>
+<pre><code>    &lt;!-- 搜索栏 --&gt;
+    &lt;div id="searchBox"&gt;
+        &amp;nbsp;用户名&amp;nbsp;&lt;input type="text" id="username_search" size="20" onkeydown="if(event.keyCode==13) searchUser()"/&gt;
+        &amp;nbsp;昵称&amp;nbsp;&lt;input type="text" id="nickname_search" size="20" onkeydown="if(event.keyCode==13) searchUser()"/&gt;
+        
+        &lt;a href="javascript:searchUser()" class="easyui-linkbutton" iconCls="icon-search" plain="true"&gt;搜索&lt;/a&gt;
+    &lt;/div&gt;</code></pre>
+<p>自定义css样式：</p>
+<pre><code>#searchBox{
+    margin-top: 16px;
+    background: #fff8f8;
+    padding: 4px;
+    font-size: 14px;
+    width: 500px;
+}</code></pre>
+<p>页面效果：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-fd2463255f0d7792.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>最后，画数据列表，我们使用easyUI给我们提供的datagrid组件来实现：</p>
+<pre><code>   &lt;br&gt;
+    
+    &lt;!-- 数据列表 --&gt;
+    &lt;table id="grid0" class="easyui-datagrid" title="用户列表" style="width:980px;height:550px"
+            data-options="pagination:true,pageSize:10,rownumbers:true,fitColumns:true,
+            singleSelect:false,collapsible:false,url:''"&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th data-options="field:'ck',checkbox:true"&gt;&lt;/th&gt;
+                &lt;th data-options="field:'username',width:80"&gt;用户名&lt;/th&gt;
+                &lt;th data-options="field:'password',width:100"&gt;密码&lt;/th&gt;
+                &lt;th data-options="field:'nickname',width:120"&gt;昵称&lt;/th&gt;
+                &lt;th data-options="field:'xb',width:0,hidden:true" &gt;性别&lt;/th&gt;
+                &lt;th data-options="field:'vip',width:0,hidden:true"&gt;贵族等级&lt;/th&gt;
+                &lt;th data-options="field:'xb_displayname',width:80" &gt;性别&lt;/th&gt;
+                &lt;th data-options="field:'vip_displayname',width:80"&gt;贵族等级&lt;/th&gt;
+                &lt;th data-options="field:'createtime',width:250""&gt;创建时间&lt;/th&gt;
+                &lt;th data-options="field:'updatetime',width:250"&gt;最后更新时间&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+    &lt;/table&gt;</code></pre>
+<p>最终效果：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e1d6fa198103d1ec.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>打开浏览器访问：<a class="uri" href="http://localhost/student/index.html">http://localhost/student/index.html</a> 即可看到该页面。</p>
+<p>本节我们就简单的画一个页面，下一讲我们继续写后台代码。</p>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+JavaScript ： 浅讲ajax
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://upload-images.jianshu.io/upload_images/1929342-205dd48f6a7446de.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h1 id="ajax入门案例">1.ajax入门案例</h1>
+<h2 id="搭建web环境">1.1 搭建Web环境</h2>
+<p>ajax对于各位来说，应该都不陌生，正因为ajax的产生，导致前台页面和服务器之间的数据传输变得非常容易，同时还可以实现页面的局部刷新。通过在后台与服务器进行少量数据交换，AJAX 可以使网页实现异步更新。这意味着可以在不重新加载整个网页的情况下，对网页的某部分进行更新。</p>
+<p>对于JavaWeb项目而言，ajax主要用于浏览器和服务器之间数据的传输。</p>
+<p>如果是单单地堆砌知识点，会显得比较无聊，那么根据惯例，我先不继续介绍ajax，而是来写一个案例吧。</p>
+<p>打开eclipse，新建一个web项目。</p>
+<p>如果对JavaWeb项目还不太清楚的，可以去参考我之前的文章。我</p>
+<p>目录结构：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-70f2efd347aa4372.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app&gt;
+
+&lt;/web-app&gt;</code></pre>
+<p>这样就好了，web项目搭建完毕。</p>
+<p>暂时不要往下写，先确保我们到目前为止的工作是没问题的。</p>
+<p>验证方法就是在WebContent目录下，新建一个空的jsp页面，里面随便写的什么。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-4cc1249d2e5beff9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;Insert title here&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style="padding:100px"&gt;
+&lt;h1&gt;Hello World&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>启动tomcat，把这个项目跑起来。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-4364c1433eee781a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>没报错。</p>
+<p>打开浏览器，输入访问地址，我这里的tomcat端口号是80 ,默认可以不写。</p>
+<p><a class="uri" href="http://localhost/ajax/index.jsp">http://localhost/ajax/index.jsp</a></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-2660bdbad0ffd7e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>来了，没问题。</p>
+<p>好的，这说明我们的web项目搭建没有问题。</p>
+<h2 id="编写服务器程序servlet">1.2 编写服务器程序Servlet</h2>
+<p><strong>个人感悟，精粹整理</strong></p>
+<p>web环境已经搭好，接下来，让我们来编写一个简单的Servlet程序，tomcat是一个服务器，现在它里面有一个名字叫做ajax的web项目，那么这些Servlet就好比是web项目里面的一个个小功能。</p>
+<p>你的电脑里面有QQ，Word，杀毒软件等程序。一个web项目，也就是一个应用程序。本质上和你电脑上的QQ概念是一样一样的。</p>
+<p>你打开QQ，可以聊天，语音，视频。这些小功能，类比到JavaWeb项目，就是一个个Servlet。</p>
+<p>很多人都知道框架，比如大名鼎鼎的SpringMVC，里面有一个个的Controller，其实这些Controller到底是什么玩意，不要怕，他们其实就是对Servlet做了一个封装，本质上还是一样一样的。</p>
+<p>我们写一个Servlet，都需要去web.xml里面注册一下，否则就用不了。你安装一个QQ，注册表里面是不是肯定也需要注册一下啊，这不还是一样一样的吗？</p>
+<p>好了，闲话不多说。我们来写一个小功能，也就是一个Servlet。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-de53a4a12e5c6f2a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>继承HttpServlet，同时改写doGet方法</p>
+<pre><code>import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class MyServlet extends HttpServlet{
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("111");
+    }
+}</code></pre>
+<p>里面我们先什么也不写。</p>
+<p>接下来，我们要在web.xml里面把这个Servlet注册一下。</p>
+<pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;web-app&gt;
+    &lt;servlet&gt;
+        &lt;!-- 这里是servlet的名字 --&gt;
+        &lt;servlet-name&gt;MyServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;MyServlet&lt;/servlet-class&gt;
+        &lt;!-- 这里写servlet类在的包路径 --&gt;
+    &lt;/servlet&gt;
+    
+    &lt;servlet-mapping&gt;
+        &lt;!-- 这里是地址映射 --&gt;
+        &lt;servlet-name&gt;MyServlet&lt;/servlet-name&gt;
+        
+        &lt;!-- 这里写servlet映射地址 --&gt;
+        &lt;url-pattern&gt;/MyServlet&lt;/url-pattern&gt;
+        
+    &lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;</code></pre>
+<p>OK，Servlet注册完毕，我们先来访问一下这个功能。</p>
+<p>重启tomcat。</p>
+<p>访问：http://localhost/ajax/MyServlet</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-011b40e10635c778.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="前台页面设计">1.3 前台页面设计</h2>
+<p>服务器小程序已经差不多了，现在我们为了和服务器进行交互，就需要编写前台页面。这个页面也就是给用户看的。换言之，用户只能通过前台页面来访问我们的Servlet。</p>
+<p>我们来写一个小案例，在页面上发送一句话到服务器，然后服务器给出一个回应就行了。</p>
+<p>就是这么一个简单的案例，主要用来熟悉一下流程。</p>
+<p>为了简单起见，我就不自己调css样式了，直接用bootstrap吧。</p>
+<p>引入bootstrap的核心css文件。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-3868d77c231f23c9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/>​</p>
+<p>然后，修改index.jsp</p>
+<pre><code>&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;link rel="stylesheet" href="${pageContext.request.contextPath}/bootstrap/css/bootstrap.min.css"&gt;
+&lt;title&gt;Insert title here&lt;/title&gt;
+&lt;style type="text/css"&gt;
+    .container {
+        margin-top:100px;
+    }
+&lt;/style&gt;
+&lt;script&gt;
+
+    window.onload = function(){
+        var btn = document.getElementById("submit");
+        btn.onclick = function(){
+            alert();
+        }
+    };
+    
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+    
+        &lt;div class="row"&gt;
+          &lt;div class="col-lg-8"&gt;
+            &lt;div class="input-group"&gt;
+              &lt;input type="text" class="form-control"&gt;
+              &lt;span class="input-group-btn"&gt;
+                &lt;button id="submit" class="btn btn-default" type="button"&gt;提交&lt;/button&gt;
+              &lt;/span&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>页面效果：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-5ca33c2ff31305d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="基于get方式的数据请求">1.4 基于get方式的数据请求</h2>
+<p>当我们点击提交按钮，就alert（）一下，如果成功的话，那么说明点击事件没有问题。然后，继续往下写代码。</p>
+<p>如果是以往，我们都是通过form表单来进行提交的，可是这样的话，就会有一个问题，就是页面会刷新，而且代码也相对比较难懂。</p>
+<p>自从ajax出来了之后，这种情况得到了巨大的改善，局部刷新技术在当时来看，还是非常不错的。</p>
+<p>我先把实现代码给出：</p>
+<pre><code>btn.onclick = function(){
+    var  xhr = window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP");
+    xhr.open("get","MyServlet?message="+document.getElementsByTagName("input")[0].value,true);
+    xhr.send();
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState==4 &amp;&amp; xhr.status==200){
+            alert(xhr.responseText);
+        }
+    };
+}</code></pre>
+<p>同时修改一下MyServlet</p>
+<pre><code>@Override
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    String msg = req.getParameter("message");
+    System.out.println(msg);
+}</code></pre>
+<p>重启 tomcat ，访问index.jsp页面。</p>
+<p>现在的浏览器一般都有调试功能，按一下F12，调试界面就出来了。然后，找到一个network，以谷歌浏览器为例</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e9d57d6c30a5bd76.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>network视图会把所有的数据交互显示出来，包括引入的 js ， css文件，还有各种请求和回应，都会在这里显示出来。</p>
+<p>比如，现在我刷新一下页面</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-8c7b47a72f885194.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>我这么一刷新，首先服务器接收到的是这么一个 URL： <a class="uri" href="http://localhost/ajax/index.jsp">http://localhost/ajax/index.jsp</a></p>
+<p>这就是一个请求，服务器收到这个请求后，返回给我 index.jsp页面和bootstrap.min.css这个文件。</p>
+<p>因为我在index.jsp的确引入过bootstrap.min.css，所以他也就一起加载进来了。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-58c9fa6d05ea3090.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>现在，我输入一句话，点击提交，看看会发生什么？</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-7eb116772c666e27.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>我们把input框里面的内容提交到服务器程序 MyServlet</p>
+<p>控制台已经接受到了，这里比较幸运，没有遇到中文乱码的问题，那么先不管乱码了。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-ebe0933c55216afb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>因为MyServlet中没有返回什么东西，所以alert出来的是空。</p>
+<p>好的，那我们给浏览器也返回一句话吧。</p>
+<pre><code>@Override
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    String msg = req.getParameter("message");
+    System.out.println(msg);
+    
+    resp.setContentType("text/html;charset=utf-8");
+    PrintWriter out=resp.getWriter();
+    out.println("你好，这是服务器返回的信息！");
+    out.flush();
+    out.close();
+    
+}</code></pre>
+<p>再次点击提交按钮</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-19514ac9ea6c6209.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>OK了。</p>
+<p>​接下来，看一下请求的具体信息</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-7d994b8938f6e894.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>在比对一下js代码，就一目了然了。</p>
+<pre><code>btn.onclick = function(){
+    var  xhr = window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP");
+    xhr.open("get","MyServlet?message="+document.getElementsByTagName("input")[0].value,true);
+    xhr.send();
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState==4 &amp;&amp; xhr.status==200){
+            alert(xhr.responseText);
+        }
+    };
+}</code></pre>
+<p>readyState:</p>
+<p>0: 请求未初始化<br/>
+1: 服务器连接已建立，还没发送<br/>
+2: 请求已接收<br/>
+3: 请求处理中<br/>
+4: 请求已完成，且响应已就绪<br/>
+当 readyState 等于 4 且状态为 200 时，表示响应已就绪.</p>
+<p>请求方式是get，并且只有当返回的状态码为200的时候，才会打印出responseText，这个就是对应的</p>
+<p>​out.println("你好，这是服务器返回的信息！");</p>
+<p>这句话。</p>
+<h2 id="基于post方式的数据请求">1.5 基于post方式的数据请求</h2>
+<p>get方法会在URL地址栏里显示你提交所带的值，post方法不会。所以，相对来说，post方法比较安全。</p>
+<p>post方法在流程上和get方式差不多，我就直接上代码了:</p>
+<pre><code>window.onload = function(){
+    var btn = document.getElementById("submit");
+    btn.onclick = function(){
+        var  xhr = window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP");
+        xhr.open("post","MyServlet",true);
+        xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        
+        var postData = {message : document.getElementsByTagName("input")[0].value};
+        
+        var postDataStr = (function(obj){ // 转成post需要的字符串.
+            var str = "";
+            for(var prop in obj){
+                str += prop + "=" + obj[prop] + "&amp;"
+            }
+            return str;
+        })(postData);
+        alert(postDataStr);
+        xhr.send(postDataStr);
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState==4 &amp;&amp; xhr.status==200){
+                alert(xhr.responseText);
+            }
+        };
+    }
+};</code></pre>
+<p>MyServlet.java</p>
+<pre><code>import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class MyServlet extends HttpServlet{
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        String msg = req.getParameter("message");
+        System.out.println(msg);
+        
+        resp.setContentType("text/html;charset=utf-8");
+        PrintWriter out=resp.getWriter();
+        out.println("你好，这是服务器返回的信息！");
+        out.flush();
+        out.close();
+        
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+    
+}</code></pre>
+<p>个人博客地址：http://www.xiaotublog.com/index.html</p>
+<p>首页：</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161111135426749-387316142.png"/></p>
+<p>详情页：</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161111135455124-1751907832.png"/></p>
+</div>
+</body>
+</html>
+

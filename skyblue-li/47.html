@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【Java框架型项目从入门到装逼】第四节 - 编写第一个Servlet程序
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>在开始这一节之前呢，我们还需要把Tomcat配置到Eclipse中，配置的方式很简单，打开Eclipse，Window，Preferences，进入到这个页面：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-52f33663718e0898.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+将Tomcat的安装目录配置到Eclipse中。<br/>
+然后，可以看到左侧多出来一个Servers文件夹：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-76c5dc6302b917eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+这个是Eclipse虚拟了一个Tomcat进来，以后我们都操作这个虚拟的Tomcat，其中也有一个Server.xml，我们也可以在里面添加Web项目，配置端口号之类的。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-71978bf817ac526b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>启动Tomcat有如图两种方式，第一种是debug模式，第二种是run模式，在debug模式中，我们就可以给程序打一个断点，然后一步一步调试。</p>
+<h3 id="新建一个dynamic-web项目-wzry注意要勾选generate-web.xml-deployment-descriptor部署描述符">1、新建一个dynamic web项目 “wzry”，注意要勾选Generate web.xml deployment descriptor（部署描述符）；</h3>
+<h3 id="在src中新建一个名叫com.wzry.web.servlet的包其中新建一个类叫loginservlet">2、在src中新建一个名叫com.wzry.web.servlet的包，其中新建一个类叫LoginServlet；</h3>
+<h3 id="servlet程序没有main方法-类一般都需要继承httpservlet类-重写initdestroydogetdopost四个方法但在实际开发中我们往往不会重写destroy方法">3、Servlet程序没有main方法 , 类一般都需要继承HttpServlet类 ,重写init、destroy、doGet、doPost四个方法，但在实际开发中，我们往往不会重写destroy方法；</h3>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-9cb7dee33f23f6e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>我们暂时就重写init方法，里面加上一句话即可。</p>
+<h3 id="在web.xml里面添加servlet配置">4、在web.xml里面添加Servlet配置；</h3>
+<p>◆添加</p>
+<pre><code> &lt;servlet&gt;
+    &lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;com.wzry.web.LoginServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;LoginServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/login.do&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;</code></pre>
+<p>按住ctrl，鼠标划上去，如果com.wzry.web.LoginServlet下面出来一个短横线，说明引入正确。<br/>
+如果是Eclipse，还要修改编译路径：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-b3ae1f883a56c709.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+这个路径是错误的，因为web项目中，Java类编译后的class文件都应该在这个地方：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-e2cbc550da77e694.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+这里需要自己手动新建一个classes文件夹。然后，他会提示你是否需要重新编译？选择Yes。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e4ac8d17a0ef1625.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+配置server.xml，部署该项目，端口号为80（浏览器中可以忽略）。启动Tomcat，然后打开浏览器，输入：<a class="uri" href="http://localhost/wzry/login.do%EF%BC%8C%E5%9B%9E%E8%BD%A6%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%89%93%E5%8D%B0%E4%BA%86init%E6%96%B9%E6%B3%95%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9">http://localhost/wzry/login.do，回车，可以看到控制台打印了init方法中的内容</a>:<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-73cabb94a2528fe1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>这就说明，我们的流程已经走通了。</p>
+<p><a href="https://www.jianshu.com/p/1bb7cfa425ba">我要下载源码</a></p>
+</div>
+</body>
+</html>
+

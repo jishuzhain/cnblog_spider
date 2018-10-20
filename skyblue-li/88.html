@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第二十二节 - 引入百度地图
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><h2 id="用户新增地址字段">20．用户新增地址字段</h2>
+<p>在实际的开发中，经常会出现对数据表新增或者修改字段的事情，所以，当用户提出加字段的需求时，我们的页面以及后台程序都要进行相应的改动。</p>
+<p>本节就以增加一个地址字段为例。</p>
+<p>打开navicat：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-f4435ebdba21d4b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-5e1e160808bbd999.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-3a80f6828ed39a4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-d2e1435a3a27ef28.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>点击保存按钮，添加完毕。</p>
+<p>userManage.html要进行的修改：</p>
+<p>新增页面的form表单要添加地址输入框：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-27ebe91acbede529.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+用户列表的table里面也要新加一个地址字段：</p>
+地址
+<p>save.php</p>
+<p>修改的sql语句，加addr字段：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-8adb98918d3682ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+新增语句也要加上addr字段</p>
+<pre><code>//新增
+        $username = $_POST["username"];
+        $password = md5 ( $_POST["password"] );
+        $nickname = $_POST["nickname"];
+        $addr = $_POST["addr"];
+
+        $sql = "insert into tm_users values (NULL,'$username','$password','$nickname',now(),now(),0,'$addr')";
+
+        //用户名非重复检测
+
+        $rs = mysql_query("select count(1) as total from tm_users where username = '$username';");
+
+
+        while($row = mysql_fetch_array($rs)){
+            if($row["total"] &gt; 0){
+                $resultData["errCode"] = -1;
+                $resultData["errMsg"] = "用户名重复！";
+                echo json_encode($resultData);
+                return;
+            }
+        }
+
+
+        //执行新增操作
+        mysql_query($sql) or die(err());
+
+        echo json_encode($resultData);</code></pre>
+<h2 id="addr的位置预览百度地图">21. addr的位置预览（百度地图）</h2>
+<h3 id="把地址列变成超链接">21.1 把地址列变成超链接</h3>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-fbbac32c98342f93.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>function addrFormatter(val){
+
+    if(!val) return "这个用户很懒，没有填写地址。";
+    return "&lt;a href=\"javascript:map('"+val+"')\"&gt;"+val+"&lt;/a&gt;";
+
+}
+
+
+function map(addr){
+
+}</code></pre>
+<p>因为要打开一个地图页面，所以现在绘制一个dialog对话框，对话框里面嵌套一层iframe。</p>
+<pre><code> &lt;div id="dialog1" class="easyui-dialog" style="width:800px;height:500px;padding:10px 20px;" closed="true" data-options="title:'地图'" &gt; 
+
+    &lt;iframe id="map" frameborder=0 scrolling='auto' style='width:100%;height:100%'&gt;&lt;/iframe&gt;
+
+  &lt;/div&gt;</code></pre>
+<p>当我们点击这里的超链接：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-383788eefccc1be0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>就应该弹出dialog1。<br/>
+代码：</p>
+<pre><code>function map(addr){
+
+    $("#dialog1").dialog("open");
+
+    $("#map").attr("src","http://map.baidu.com/?newmap=1&amp;ie=utf-8&amp;s=s%26wd%3D"+addr);
+
+}</code></pre>
+<p>效果：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-3974ab713ada7612.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>源码获取：<a class="uri" href="https://www.jianshu.com/p/4977bd0073d5">https://www.jianshu.com/p/4977bd0073d5</a></p>
+</div>
+</body>
+</html>
+

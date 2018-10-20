@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第十五节 - 用户管理模块（删除确认）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>假如有一天，用户找到你，说万一不小心手一抖，就点击了删除用户，不太好。能不能再误点的时候，再给个确认框，让用户进行二次确认。</p>
+<p>OK，用户是上帝。这边我们可以考虑用confirm方法进行开发。</p>
+<p>参考代码：</p>
+<pre><code>function deleteUser(id){
+
+    if(!confirm("您确定要删除这用户吗？")){
+        return;
+    }
+
+    if(!confirm("您不后悔？")){
+        return;
+    }
+
+    if(!confirm("您真的真的要删除这用户吗？")){
+        return;
+    }
+
+    if(!confirm("不再考虑一下吗？")){
+        return;
+    }
+
+    if(!confirm("好吧，你牛逼！")){
+        return;
+    }
+
+    $.post("deleteUser.php",{id:id},function(data){
+
+
+
+        if(data.errCode &lt; 0){
+            $.messager.alert("系统提示", data.errMsg);
+            return;
+        }
+
+        $.messager.alert("系统提示", "删除成功！");
+        $("#grid0").datagrid("reload");
+
+    },"json");  
+}
+
+//恢复用户
+function recoverUser(id){
+
+    if(!confirm("您确定要恢复这用户吗？")){
+        return;
+    }
+    
+    $.post("recoverUser.php",{id:id},function(data){
+
+        if(data.errCode &lt; 0){
+            $.messager.alert("系统提示", data.errMsg);
+            return;
+        }
+
+        $.messager.alert("系统提示", "恢复成功！");
+        $("#grid0").datagrid("reload");
+
+    },"json");
+
+}</code></pre>
+</div>
+</body>
+</html>
+

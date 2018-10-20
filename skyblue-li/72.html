@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+手把手的SpringBoot教程，SpringBoot创建web项目（五）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>这一节，我们来演示如何在SpringBoot项目中连接数据库，并且自动创建一张表。</p>
+<p>按照惯例，数据库我们依然使用mysql，至于什么是jpa呢？</p>
+<p>jpa是<a href="https://www.baidu.com/s?wd=sun&amp;tn=44039180_cpr&amp;fenlei=mv6quAkxTZn0IZRqIHckPjm4nH00T1d9uycdnyuWnj-bm1n3P1f30ZwV5Hcvrjm3rH6sPfKWUMw85HfYnjn4nH6sgvPsT6KdThsqpZwYTjCEQLGCpyw9Uz4Bmy-bIi4WUvYETgN-TLwGUv3EnHn3njmznWfY">sun</a>推出的持久化规范（java persistens <a href="https://www.baidu.com/s?wd=api&amp;tn=44039180_cpr&amp;fenlei=mv6quAkxTZn0IZRqIHckPjm4nH00T1d9uycdnyuWnj-bm1n3P1f30ZwV5Hcvrjm3rH6sPfKWUMw85HfYnjn4nH6sgvPsT6KdThsqpZwYTjCEQLGCpyw9Uz4Bmy-bIi4WUvYETgN-TLwGUv3EnHn3njmznWfY">api</a>），JPA通过<a href="https://www.baidu.com/s?wd=JDK&amp;tn=44039180_cpr&amp;fenlei=mv6quAkxTZn0IZRqIHckPjm4nH00T1d9uycdnyuWnj-bm1n3P1f30ZwV5Hcvrjm3rH6sPfKWUMw85HfYnjn4nH6sgvPsT6KdThsqpZwYTjCEQLGCpyw9Uz4Bmy-bIi4WUvYETgN-TLwGUv3EnHn3njmznWfY">JDK</a> 5.0注解或<a href="https://www.baidu.com/s?wd=XML&amp;tn=44039180_cpr&amp;fenlei=mv6quAkxTZn0IZRqIHckPjm4nH00T1d9uycdnyuWnj-bm1n3P1f30ZwV5Hcvrjm3rH6sPfKWUMw85HfYnjn4nH6sgvPsT6KdThsqpZwYTjCEQLGCpyw9Uz4Bmy-bIi4WUvYETgN-TLwGUv3EnHn3njmznWfY">XML</a>描述对象－关系表的映射关系，并将运行期的实体对象持久化到数据库中。JPA 的目标之一是制定一个可以由很多供应商实现的<a href="https://www.baidu.com/s?wd=API&amp;tn=44039180_cpr&amp;fenlei=mv6quAkxTZn0IZRqIHckPjm4nH00T1d9uycdnyuWnj-bm1n3P1f30ZwV5Hcvrjm3rH6sPfKWUMw85HfYnjn4nH6sgvPsT6KdThsqpZwYTjCEQLGCpyw9Uz4Bmy-bIi4WUvYETgN-TLwGUv3EnHn3njmznWfY">API</a>，并且开发人员可以编码来实现该API，而不是使用私有供应商特有的API。</p>
+<p>实现JPA规范的框架，比较出名的是hibernate。</p>
+<p>现在，我们需要在pom文件中引入两个依赖：</p>
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+<p>分别为spring-data-jpq和mysql驱动。</p>
+<p>Spring Data是一个用于简化数据库访问，并支持云服务的开源框架。其主要目标是使得对数据的访问变得方便快捷，并支持map-reduce框架和云计算数据服务。 Spring Data 包含多个子项目，spring-data-jpq就是其中的一个。</p>
+<p>修改yml文件：</p>
+<pre><code>server:
+  port: 8088
+  context-path: /demo
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/crud  
+    username: root
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: create
+      show-sql: true</code></pre>
+<p>其中，设置ddl-auto: create的目的就是在项目启动的时候，就创建表。</p>
+<p>接着，我们去新建一个JavaBean：<br/>
+<img alt="image.png" src="https://upload-images.jianshu.io/upload_images/1929342-cebc188115a776b5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+代码：</p>
+<pre><code>package com.springboot.study.bean;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
+    
+    private String username;
+    private String password;
+    
+    //无参构造方法，这个必须要有，不然会报错
+    public User() {
+        
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    
+    
+    
+}</code></pre>
+<p>其中，主键ID设置为自增长。</p>
+<p>然后，启动项目，发现数据库的表已经自动生成了。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-c14d9d55fae44d06..png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" title="1521816186649061426.png"/><br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-566ca02e3ece98ee..png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" title="1521816202063019322.png"/></p>
+<p>源码下载地址：http://java520.top/article/3489.html</p>
+</div>
+</body>
+</html>
+

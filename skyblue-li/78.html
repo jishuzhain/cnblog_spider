@@ -1,0 +1,23 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第十三节 - EasyUI列格式化
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>因为easyUI的datagrid组件是横着一格一格加载数据的，一行加载好了之后才会去加载下一行。所谓的列格式化，就是在加载某一列的所有单元格时，对即将加载到这些单元格的数据进行二次包装。</p>
+<p>比如，我们要把部门编号都变成一个超链接，假如链接到百度，怎么做？</p>
+<p>方法就是在你需要格式化的那一列上添加一个formatter，就像这样：</p>
+<pre><code>&lt;th field="deptid" width="80"  align="center" formatter="deptidFormatter"&gt;部门编号&lt;/th&gt;</code></pre>
+<p>属性值就是一个格式化函数，例：</p>
+<pre><code>function deptidFormatter(val){
+    return "&lt;a href='http://www.baidu.com' &gt;" + val + "&lt;/a&gt;";
+
+}</code></pre>
+</div>
+</body>
+</html>
+

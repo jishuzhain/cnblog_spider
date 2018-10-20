@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第九节 - 部门管理模块（模糊查询）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>给datagrid添加一个工具栏。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-8aff0fbb57e09e5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>效果：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-fe9994e625c6fb19.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+模糊查询部门名称。<br/>
+接下来，在工具栏区域画一个input框：</p>
+<pre><code>&lt;div id="toolbar" style="padding:10px 12px;"&gt;
+
+    请输入部门名称：&lt;input type="text" name="deptname" id="deptname" /&gt;
+
+&lt;/div&gt;</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-835f997da6050dc2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>然后，画一个查询按钮：</p>
+<pre><code>&lt;button id="submit" style="float:right;"&gt;查询&lt;/button&gt;</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-4955282b7c6fc1e4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>给查询按钮添加一个点击事件，弹出一个框，提示正在查询。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-99b15491ce5579db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>然后，看看能不能拿到输入中的值？<br/>
+完整代码：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-f411c754ac59c432.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>去修改PHP文件。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-1809b55e672d07df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+代码：</p>
+<pre><code>$deptname = "";
+
+
+    if(isset($_POST['deptname']) &amp;&amp; $_POST['deptname'] != null){
+        $deptname = $_POST['deptname'];
+
+    }
+
+    $resultset = mysql_query("select * from tm_dept where 1=1 and deptname like '%$deptname%' limit $start,$rows") or die(mysql_error());</code></pre>
+<p>另外，查询总数的地方也要加上这个where条件。</p>
+<pre><code>$resultset = mysql_query("select count(*) as total from tm_dept where 1=1  and deptname like '%$deptname%'") or die(mysql_error());</code></pre>
+<p>下载地址：<a class="uri" href="https://pan.baidu.com/s/1OXvqQwAmz7usgD4KqiUXLw">https://pan.baidu.com/s/1OXvqQwAmz7usgD4KqiUXLw</a></p>
+</div>
+</body>
+</html>
+

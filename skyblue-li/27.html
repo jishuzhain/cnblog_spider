@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【手把手】JavaWeb 入门级项目实战 -- 文章发布系统 （第十二节）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130104819287-199789674.png"/></p>
+<p>好的，那么在上一节中呢，评论功能的后台已经写好了，这一节，先把这部分后台代码和前台对接一下。</p>
+<h1 id="评论功能实现">1.评论功能实现</h1>
+<p>我们修改一下保存评论按钮的点击事件，用jQuery的方式获取文本框中的值，然后通过ajax方法，把数据传递到CommentController.jsp，jsp就是Servlet，这样写就和传递到Servlet是差不多的意思。</p>
+<p>detail.jsp</p>
+<p>代码：</p>
+<pre><code>$(".button").eq(0).on('click',function(){
+    var txt = $('#commenttxt').val();
+    $.post("${basePath}/controller/CommentController.jsp",{txt : txt},function(data){
+        data = data.trim();
+        if(data == '-1'){
+            alert('请先登录！');
+        }
+    });
+});</code></pre>
+<p>我们采用{}，也就是JSON的方式，将数据包裹一下，传递过去。</p>
+<p>在JSP页面是这样接收的：</p>
+<pre><code>&lt;%@page import="bean.User"%&gt;
+&lt;%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%&gt;
+&lt;%
+    //因为评论是需要登陆的,如果没有登陆我们就调整到登陆页面去 
+    User user = (User)session.getAttribute("user");
+    if(user==null){//代表用户没有登陆
+        out.print("-1");
+        return;
+    }
+    String txt = request.getParameter("txt").toString();
+    System.out.println(txt);
+%&gt;</code></pre>
+<p>它只是一种写法而已，如果在Servlet中，你是不是还要在doGet或者doPost方法中传递一个 HttpServletRequest request 参数呢？而当我们采用JSP的话呢，就不需要这么做了，这就是九大隐式对象的好处。</p>
+<p>我们通过</p>
+<pre><code>request.getParameter("txt").toString();</code></pre>
+<p>的方式，先获取到前台传过来的评论信息，并且用一个String数据类型的txt ，保存下来。</p>
+<p>接着，先不急着往下写，你可以先打印出来看看，看看它能不能取到，如果这都不能取到，就说明某个地方已经错了，再写下去也没有意义。</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130104945662-534075062.png"/></p>
+<p>我们随便写一个什么东西，点击保存评论。</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130105002037-1286951988.png"/></p>
+<p>控制台成功打印出来了，这说明代码没问题。</p>
+<p>OK，继续，接下来，我们就需要把这个信息保存到数据库里了。</p>
+<p>在调用CommentService之前，我们先看一下要保存哪些东西。（这些信息去CommentService里面看，之前写过一个saveComment方法）</p>
+<p>保存信息的清单：</p>
+<p>id,user_id,content,article_id,create_time,is_delete</p>
+<p>id自然不用多说，我们采用UUID就行了。user_id是用户ID，就是当前登录的那个人。content的话，就是评论的内容，也就是我们刚刚取到的txt。article_id是文章的id，到时候加载评论的时候，肯定就是通过这个字段来查找的。create_time是创建日期，is_delete为是否删除，我们默认给他一个0，表示不删除。</p>
+<p>好的，这些东西确认好了，就开始写代码吧。</p>
+<p>通过以上的分析，我们是不是还要把文章ID从前台传过来呢？好的，说干就干。</p>
+<p>回到detail.jsp，给点击事件中的JSON对象添加一个属性，把文章ID拿到：</p>
+<pre><code>$(".button").eq(0).on('click',function(){
+    var txt = $('#commenttxt').val();
+    $.post("${basePath}/controller/CommentController.jsp",{txt : txt , articleId : "${article.id}"},function(data){
+        data = data.trim();
+        if(data == '-1'){
+            alert('请先登录！');
+        }
+    });
+});</code></pre>
+<p>修改后的CommentController</p>
+<pre><code>&lt;%@page import="bean.User"%&gt;
+&lt;%@page import="bean.Comment"%&gt;
+&lt;%@page import="service.CommentService"%&gt;
+&lt;%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%&gt;
+&lt;%
+    User user = (User)session.getAttribute("user");
+    if(user==null){//代表用户没有登陆
+        out.print("-1");
+        return;
+    }
+    String txt = request.getParameter("txt").toString();
+    String articleId = request.getParameter("articleId").toString();
+     
+    CommentService commentService = new CommentService();
+    Comment comment = new Comment();
+    comment.setId(UUID.randomUUID().toString());
+    comment.setUserId(user.getId());
+    comment.setArticleId(articleId);
+    comment.setContent(txt);
+    commentService.saveComment(comment);
+     
+     
+%&gt;</code></pre>
+<p>测试：</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130105019037-1067262801.png"/></p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130105024240-1844260193.png"/></p>
+<p>哎哟不错哦~~ 貌似木有问题。</p>
+<p>再看看数据库。</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130105033927-379408954.png"/></p>
+<p>哎呀呀，真的有了！</p>
+<p>那么这是不是就说明，评论功能到目前都是正确的？</p>
+<p>接下来，我们是不是还应该给用户一点反馈表示评论已经成功保存了？</p>
+<p>我们在CommentController里面，最后再加上返回一个标志位 1 即可。</p>
+<p>out.print("1");<br/>
+然后前台判断，如果返回的是1，那么就提示“保存成功！”</p>
+<pre><code>$(".button").eq(0).on('click',function(){
+    var txt = $('#commenttxt').val();
+    $.post("${basePath}/controller/CommentController.jsp",{txt : txt , articleId : "${article.id}"},function(data){
+        data = data.trim();
+        if(data == '-1'){
+            alert('请先登录！');
+        }else if(data == '1'){
+            alert('保存成功！');
+        }
+    });
+});</code></pre>
+<p>这样不就好了吗？O(∩_∩)O~~</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130105041037-786757559.png"/></p>
+<h1 id="评论加载">2.评论加载</h1>
+<p>评论保存已经没问题了，接下来就是加载。</p>
+<p>回到detail.jsp页面，第一步，是不是要导包啊？</p>
+<pre><code>&lt;%@ page language="java" import="service.CommentService"%&gt;</code></pre>
+<p>第二步，就是获取CommentService的实例对象。然后把我们需要的评论都查询出来。（因为之前查询文章内容的时候，已经获取到id了，所以这里不再获取）</p>
+<pre><code>&lt;%
+    CommentService commentService = new CommentService();
+    List&lt;Map&lt;String,Object&gt;&gt; list = commentService.getCommentsByArticleId(id);
+    pageContext.setAttribute("comments", list);
+    System.out.println(list);
+%&gt;</code></pre>
+<p>测试，刷新一下页面，要是不起作用的话呢，就重启一下tomcat。</p>
+<p>控制台成功打印出了信息：</p>
+<p>[{content=OK, username=zhangsan}, {content=很不错的文章，赞一个！, username=zhangsan}]</p>
+<p>接下来，就是如何把这些数据贴到页面上的问题了。</p>
+<p>怎么贴呢，是不是还要循环一下？</p>
+<pre><code>&lt;div class='mb64' class="comment_list"&gt;
+    &lt;c:forEach items="${comments}" var="comment"&gt;
+        &lt;div class="comment_infor clearfix"&gt;
+            &lt;div style='border-bottom:1px solid #ccc' class="comment_word"&gt;
+                 &lt;p style='border-bottom:20px solid #fff'&gt;${comment.username}说：&lt;/p&gt;
+                 &lt;p class='mb32'&gt;${comment.content}&lt;/p&gt;
+             &lt;/div&gt;
+        &lt;/div&gt;
+     &lt;/c:forEach&gt;
+&lt;/div&gt;</code></pre>
+<p>这样就行了，刷新：</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130105051912-791011561.png"/></p>
+<p>样式稍微有点问题，稍微调一下：</p>
+<pre><code>.comment_word {
+    margin-top:16px;
+}</code></pre>
+<p>这样好些了。</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130105100818-1381191887.png"/></p>
+<p>最后，当提示保存成功的时候，顺便把页面刷新一下，这样方便我们直接看到效果：</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161130105106693-1686567878.png"/></p>
+<p>本文结束...</p>
+<p>最近事情太多，一方面项目工期加紧，空余时间越来越少。另一方面，我自己的个人网站-小兔博客刚刚起步，一大堆BUG要调整，真的有些分身乏术的感觉。</p>
+<p>这个系列，到这一节，一共写了12章，虽然不够完整，但是基本的前后台已经有了。我想，对于新人而言，还是有一定的借鉴意义的。我发现之前的这段日子里，自己开坑无数，却都不系统，所以，我打算在今后的文章中，做一个系统的归类，否则的话显得有些杂乱。</p>
+<p>这个系列，这应该算是最后一章，没法子，个人精力有限，不可能真的把一个完完整整的网站做出来，配上博客讲解，那样的话工作量实在太大。不过这个系列我还是倾注了很多心血的，一路上，也感谢你们的陪伴，这个小网站也是在诸位的眼皮子底下一步一步成长起来的。最后，还是非常感谢大家的陪伴。好的，那么这个系列到此为止，结束了。</p>
+<p>小兔博客：http://www.xiaotublog.com/<br/>
+文章发布系统demo（雏形）：http://www.xiaotublog.com:8088/Article/ （测试用户：zhangsan/123456）<br/>
+技术文章搜索（简书、博客园）：http://www.xiaotublog.com/search.html</p>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第五节 - easyUI的基本使用
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><h1 id="列表组件-datagrid">1. <strong>列表组件 datagrid</strong></h1>
+<h2 id="创建一个grid.html">1.1 <strong>创建一个grid.html</strong></h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-5c429b39a9efd4fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>&lt;html&gt;
+    
+    &lt;head&gt;
+        &lt;meta charset="utf-8" /&gt;
+        
+    
+    &lt;/head&gt;
+    
+    &lt;body&gt;
+    
+    &lt;/body&gt;
+
+
+&lt;/html&gt;</code></pre>
+<h2 id="引入easyui的资源文件">1.2 引入easyUI的资源文件</h2>
+<pre><code>&lt;script type="text/javascript" src="jquery-easyui-1.3.3/jquery.min.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" type="text/css" href="jquery-easyui-1.3.3/themes/default/easyui.css"&gt;
+&lt;link rel="stylesheet" type="text/css" href="jquery-easyui-1.3.3/themes/icon.css"&gt;
+&lt;script type="text/javascript" src="jquery-easyui-1.3.3/jquery.easyui.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="jquery-easyui-1.3.3/validate.js"&gt;&lt;/script&gt;</code></pre>
+<h2 id="绘制表格组件">1.3 绘制表格组件</h2>
+<p>Html：</p>
+<pre><code>&lt;table id='grid0' title="部门管理01"  class="easyui-datagrid" 
+fitColumn="true" pagination="true" 
+rownumbers="true" url="xxx.php" fit="false" toolbar="#toolbar"&gt;
+
+ &lt;/table&gt;</code></pre>
+<p>效果：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-e26943df3d2ea0fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-3d16442a762fc4a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-79b17621a985472c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="编写后台程序查询部门数据">1.1 <strong>编写后台程序，查询部门数据</strong></h2>
+<p>在当前文件夹，新建一个dept.php</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-8288ce2ed7558598.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>进行数据库连接测试<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-b0eee5247e0a836a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>查询部门表数据，json格式返回：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-89e2f0de03e84297.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="分页查询">1.5 分页查询</h2>
+<p>如果我们想要做分页，就需要给datagrid传递两个参数，分别为total和rows，total代表这个表的查询总数，rows代表分页后查出来的数据。</p>
+<p>分页规律：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-137e9503b106a4a0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>现在，首先考虑如何在php文件中获取第几页和每页多少条？<br/>
+在datagrid组件中，只要你设置了分页，就会给后台传递page和rows，分别对应第几页和每页多少条。</p>
+<p>代码：</p>
+<pre><code>//查询部门表中的数据
+    
+    $resultset = mysql_query("select * from tm_dept where 1=1 limit $start,$rows") or die(mysql_error());
+    
+    
+    
+    $list = array();
+    $count = 0;
+    
+    while($row = mysql_fetch_array($resultset)){
+        
+        $list[$count++] = $row;
+    }
+    
+    
+    $data = array();
+    
+    $data["rows"] = $list;
+    
+    
+    $resultset = mysql_query("select count(*) as total from tm_dept") or die(mysql_error());
+    
+    while($row = mysql_fetch_array($resultset)){
+        
+        $data["total"] = $row["total"];
+    }
+    
+    
+    echo json_encode($data);</code></pre>
+<h1 id="按钮组件-linkbutton">2. 按钮组件 linkbutton</h1>
+<p>渲染按钮的方法，给一个a标签加上class为easyui-linkbutton 即可。</p>
+<p>例子：</p>
+<pre><code>&lt;a href="javascript:openUserAddPage()" class="easyui-linkbutton" iconCls="icon-add" plain="true"&gt;新增用户&lt;/a&gt;</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-d25d1d7b400f946e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h1 id="右下角弹窗组件-.messager">3.右下角弹窗组件 $.messager</h1>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-56a0b67084a11678.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>下载地址：<a class="uri" href="https://pan.baidu.com/s/1OXvqQwAmz7usgD4KqiUXLw">https://pan.baidu.com/s/1OXvqQwAmz7usgD4KqiUXLw</a></p>
+</div>
+</body>
+</html>
+

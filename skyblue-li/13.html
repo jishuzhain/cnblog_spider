@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【手把手】JavaWeb 入门级项目实战 -- 文章发布系统 （第二节）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://upload-images.jianshu.io/upload_images/1929342-691a6d0e37a67372.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>昨天给这个系列开了一个头，那么，今天继续吧。</p>
+<h1 id="登陆和注册按钮">3.4 登陆和注册按钮</h1>
+<p>导航栏已经做好了，那么一般来说，在标题栏的最右边就是登陆和注册按钮。</p>
+<pre><code>&lt;div class='login'&gt;
+    &lt;span&gt;&lt;a href="javascript:void(0)"&gt;登陆&lt;/a&gt;&lt;/span&gt;  
+    &lt;span&gt;|&lt;/span&gt; 
+    &lt;span&gt;&lt;a href="javascript:void(0)"&gt;注册&lt;/a&gt;&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+<p>css样式：</p>
+<pre><code>.header .login {
+    float: right ; 
+    color: #fff ;
+    line-height: 72px ;
+    margin-right: 20px ;
+}</code></pre>
+<p>这样就做好了。</p>
+<p>我们顺便给首页的导航按钮设置一个背景色：</p>
+<pre><code>.header ul li.first {
+    margin-left: 30px ;
+    background:#74b0e2 ;
+}</code></pre>
+<h1 id="网页banner制作">3.6 网页banner制作</h1>
+<h2 id="什么是banner">3.6.1 什么是banner？</h2>
+<p>banner 可以是网站页面的<strong>横幅</strong>广告，也可以是游行活动时用的<em>旗帜</em>，还可以是报纸杂志上的大标题。<em>Banner</em> 主要体现中心意旨，形象鲜明表达最主要的情感思想或宣传中心。</p>
+<p>上面是网络的解释，我个人感觉所谓的banner就是一些希望重点展示的信息，可以采用轮播图的形式，也可以是一些横幅和广告。</p>
+<p>我们先把空间给它腾出来。</p>
+<pre><code>&lt;div class="banner"&gt;
+
+&lt;/div&gt;</code></pre>
+<pre><code>.banner {
+    height: 380px ;
+    overflow: hidden ;
+    background: #ccc;
+}</code></pre>
+<p>标题栏下面的的灰色区域就是我们打算放置banner的地方。</p>
+<h2 id="轮播图">3.6.2 轮播图</h2>
+<p>我们就采用最基本的轮播图方式吧，为了把轮播图的制作讲清楚，我们单独开一个页面来说明。</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset="UTF-8"&gt;
+        &lt;style type="text/css"&gt;
+            * {
+                padding: 0;
+                margin: 0;
+            }
+            ul li {list-style: none;}
+        &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>加上banner区域</p>
+<pre><code>&lt;div class='banner'&gt;
+    &lt;div class='content'&gt;
+        
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>css：</p>
+<pre><code>* {
+    padding: 0;
+    margin: 0;
+}
+ul li {list-style: none;}
+.banner {
+    height: 380px;
+    background: #ccc;
+    margin-top: 20px;
+    position: relative;
+}
+.banner .content {
+    width: 1060px;
+    height: 450px;
+    margin: 20px auto;
+    position: relative;
+}</code></pre>
+<p>效果</p>
+<p>我准备了五张图片，全部来自百度搜索。</p>
+<pre><code>&lt;div class='banner'&gt;
+    &lt;div class='content'&gt;
+        &lt;ul&gt;
+            &lt;li&gt;
+                &lt;a href="javascript:void(0)"&gt;
+                    &lt;img src="1.jpg "/&gt;
+                &lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;a href="javascript:void(0)"&gt;
+                    &lt;img src="2.jpg "/&gt;
+                &lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;a href="javascript:void(0)"&gt;
+                    &lt;img src="3.jpg "/&gt;
+                &lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;a href="javascript:void(0)"&gt;
+                    &lt;img src="4.jpg "/&gt;
+                &lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;a href="javascript:void(0)"&gt;
+                    &lt;img src="5.jpg "/&gt;
+                &lt;/a&gt;
+            &lt;/li&gt;
+            
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>因为是图片列表，所以我们习惯性的使用 <strong>ul li</strong> 来实现，当然，你使用div也可以，效果上都是差不多的，但是那样会令代码看起来不够清晰。</p>
+<p>如果我看别人的网页，发现p标签，我的第一反应，这应该是段落。当我发现 <strong>ul li</strong> ，那么我就知道这是一个列表。</p>
+<p>如果你全部用div，就达不到这个效果了。</p>
+<p>我们给每一张图片加一个高度和宽度。</p>
+<pre><code>.banner ul li img {
+    width: 1024px ;
+    height: 380px ;
+}</code></pre>
+<h2 id="css样式优化">3.6.3 css样式优化</h2>
+<p>这样子的话，所有的图片都会独占一行，所以，我们给每一张图片加一个浮动。</p>
+<p>你有没有发现，float，margin这些css样式用得特别频繁呢？</p>
+<p>是的，其实我们的css样式表中，充斥着很多这样的重复代码，那么有没有什么办法可以改善这种情况呢？</p>
+<p>答案肯定是有的，就是说，我能不能设置一种通用的class，比如float : left，我干脆专门写一个class类，谁想要左浮动，只要加上我这个class就行了。</p>
+<p>说干就干：</p>
+<pre><code>.fl {float: left;}
+.fr {float: right;}</code></pre>
+<p>fl 是 float : left 的简称。<br>
+fr 是 float : right的简称。</br></p>
+<p>同时，为了容纳这么多图片在同一行展现，我们还需要给ul加一个非常大的宽度：</p>
+<pre><code>.banner .content ul{
+    width: 10000px;
+}</code></pre>
+<p>给它10000px吧，肯定够了，毕竟只有5张图片。</p>
+<p>下一个问题，宽度有点太宽了，我们不需要把所有图片都显示出来。</p>
+<p>我们给banner加上一个 overflow: hidden;</p>
+<p>顺便把背景色去掉。</p>
+<pre><code>.banner {
+    height: 380px;
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+}</code></pre>
+<p>overflow: hidden;代表溢出隐藏。</p>
+<h2 id="左右按钮">3.6.4 左右按钮</h2>
+<p>至于左右按钮，之前的项目中正好有这个素材，我就直接拿过来了。</p>
+<p>接下来，我们在content区域中，ul下面添加两个按钮，用来控制上一张和下一张。我这边就直接上代码了：</p>
+<pre><code>&lt;i class='btn_left'&gt;&lt;/i&gt;
+&lt;i class='btn_right'&gt;&lt;/i&gt;</code></pre>
+<p>css</p>
+<pre><code>.btn_left,.btn_right{
+    display: inline-block;
+    width: 21px;
+    height: 150px;
+    background: url(banner_tb.png) no-repeat;
+    position: absolute;
+    left: -38px;
+    top: 90px;
+}
+
+.btn_right{
+    display: inline-block;
+    width: 21px;
+    height: 150px;
+    background: url(banner_tb.png) no-repeat;
+    background-position: -29px 0;
+    position: absolute;
+    left: 1041px;
+    top: 90px;
+}</code></pre>
+<p>效果：</p>
+<p>我们发现，两个按钮的css样式有很多重复的地方，那么，我们稍微优化一下吧：</p>
+<pre><code>.btn_left ,.btn_right{
+    display: inline-block;
+    width: 21px;
+    height: 150px;
+    background: url(banner_tb.png) no-repeat;
+    position: absolute;
+    left: -38px;
+    top: 90px;
+}
+
+.btn_right{
+    background-position: -29px 0;
+    position: absolute;
+    left: 1041px;
+    top: 90px;
+}</code></pre>
+<h2 id="按钮显隐的控制">3.6.5 按钮显隐的控制</h2>
+<p>接下来，做一个当鼠标滑入content区域，就显示按钮，否则按钮隐藏的效果。</p>
+<p>首先，将两个按钮的透明度设为0，也就是隐藏。</p>
+<pre><code>opacity: 0;</code></pre>
+<p>下一步，设置content的hover事件。</p>
+<pre><code>.banner .content:hover .btn_left{
+    opacity: 1;
+}
+
+.banner .content:hover .btn_right{
+    opacity: 1;
+}</code></pre>
+<p>这样可能显得有些突兀，我们可以利用过渡样式 transition，让透明度的变化有一个过渡的效果，时间由自己设定。</p>
+<pre><code>transition: all ease 0.6s;</code></pre>
+<p>这句话的意思就是说，所有的css属性如果发生变化，我们就平和地（ease），用0.6秒的时间来变过去。</p>
+<p>截图效果不是很好，我到时候会把demo发到网上，所以这里就不截图了吧。</p>
+<p>这个案例，我打算做一个无缝轮播，到目前为止，还有个小问题。</p>
+<p>从图中可以看到，左边是没有图片的，于是，我们需要手动地将图片列表往左移动单张图片的宽度，也就是1024px。</p>
+<pre><code>.banner .content ul{
+    width: 10000px;
+    margin-left: -1024px;
+}</code></pre>
+<p>看起来图片有些太宽了呢，恩，那好吧，我把图片的高度和父容器的高度都调大一些，就400px吧。</p>
+<p>顺便给两个按钮加上 cursor: pointer 这个属性。</p>
+<h2 id="如何实现下一张">3.6.5 如何实现下一张？</h2>
+<p>终于到js逻辑控制了，马上迎来的问题就是，怎么实现下一张呢？</p>
+<p>我们知道，打从一开始，所有的图片就已经全部被加载好了，我们要移动图片，说穿了，就是改变 ul 的margin-left就ok了。</p>
+<p>那么，如果我们要看下一张图片，是不是只要把 ul 的margin-left 减去一张图片的宽度就可以了呢？</p>
+<p>因为要使用动画效果，所以我们引入jQuery。</p>
+<pre><code>&lt;script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"&gt;&lt;/script&gt;</code></pre>
+<p>获取左右按钮，包装成jQuery对象：</p>
+<pre><code>var leftBtn = $('.btn_left').eq(0); //左按钮
+var rightBtn = $('.btn_right').eq(0);//右按钮</code></pre>
+<p>给右边的按钮添加一个点击事件：</p>
+<pre><code>rightBtn.on('click',function(){
+    alert();
+});</code></pre>
+<p>我建议初学的话，不要急着往下写，先在点击事件里面alert一下，看看到此为止的代码是否正确？如果alert不出来，那说明代码已经有错误了。</p>
+<p>经检测，是没问题的，很好，我们继续往下写。</p>
+<p>我们把 ul 也包装成jQuery对象：</p>
+<pre><code>var ul = $('.banner .content ul').eq(0); </code></pre>
+<p>然后，编写点击事件。</p>
+<p>因为我们已经将ul向左移动了1024px，所以，这次我们给它一个2048px；</p>
+<pre><code>rightBtn.on('click',function(){
+    ul.animate({marginLeft : -2048},1000);
+});</code></pre>
+<p>网盘地址<br/>
+<a href="http://pan.baidu.com/s/1mhN754s#list/path=%2F">http://pan.baidu.com/s/1mhN754s#list/path=%2F</a></p>
+<p><strong>免责声明</strong>： 博客中所有的图片素材均来自百度搜索，仅供学习交流，如有问题请联系我，侵立删，谢谢。</p>
+</div>
+</body>
+</html>
+

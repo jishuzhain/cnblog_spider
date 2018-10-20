@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第二十六节 - 个人详情页制作
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>在一般的系统中，当用户点击头像的时候，就会跳转到对应的个人详情页，在这个页面，他可以查看和修改自己的个人信息，或者更换头像。</p>
+<p>本案例中，个人详情页使用bootstrap框架。</p>
+<p>首先，我们新建一个html页面作为我的个人详情页。为了获取后台数据比较方便，这个详情页的文件格式我们就改为php。</p>
+<p>在项目根目录新建一个user.php。</p>
+<pre><code>&lt;html&gt;
+    
+    &lt;head&gt;
+        &lt;meta charset="utf-8"&gt;
+        &lt;title&gt;个人详情页&lt;/title&gt;
+
+        &lt;script type="text/javascript"&gt;&lt;/script&gt;
+        &lt;style type="text/css"&gt;
+            
+
+
+        &lt;/style&gt;
+
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        
+        个人详情页
+
+
+    &lt;/body&gt;
+
+
+
+&lt;/html&gt;</code></pre>
+<p>然后，我们希望点击用户头像就跳转到这个详情页，怎么做呢？很简单，只要给img标签外面套一层a标签即可。</p>
+<pre><code>&lt;a href="user.php" target="_blank"&gt;&lt;img class='header_pic' width="64px" height="64px" src="imageUpload\&lt;?php  echo $header; ?&gt;" /&gt;&lt;/a&gt;</code></pre>
+<p>如果要用a标签打开一个新的页面，而不是当前页面直接跳转的话，就需要加上target="_blank" 属性。</p>
+<p><img alt="image.png" src="https://upload-images.jianshu.io/upload_images/1929342-3b77c946aebf389d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>测试成功。</p>
+<p>个人详情页的绘制我们采用bootstrap框架。</p>
+<p>抄一段百度百科：<br/>
+Bootstrap，来自 <a href="https://baike.baidu.com/item/Twitter">Twitter</a>，是目前很受欢迎的前端框架。Bootstrap 是基于 HTML、CSS、JavaScript 的，它简洁灵活，使得 Web 开发更加快捷。<sup> [1]</sup>  它由Twitter的设计师Mark Otto和Jacob Thornton合作开发，是一个CSS/HTML框架。Bootstrap提供了优雅的HTML和CSS规范，它即是由动态CSS语言<a href="https://baike.baidu.com/item/Less">Less</a>写成。Bootstrap一经推出后颇受欢迎，一直是<a href="https://baike.baidu.com/item/GitHub">GitHub</a>上的热门开源项目，包括<a href="https://baike.baidu.com/item/NASA">NASA</a>的MSNBC（微软全国广播公司）的Breaking News都使用了该项目。<sup> [2]</sup>  国内一些移动开发者较为熟悉的框架，如<a href="https://baike.baidu.com/item/WeX5">WeX5</a>前端开源框架等，也是基于Bootstrap源码进行性能优化而来。</p>
+<p>综上所述，反正bootstrap<strong>很牛逼</strong>，<strong>很流行</strong>，<strong>很好用</strong>就对了。</p>
+<p>Bootstrap:  <a href="http://www.bootcss.com/"><u>http://www.bootcss.com/</u></a></p>
+<p><img alt="image.png" src="https://upload-images.jianshu.io/upload_images/1929342-2630abb3406cbcd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img alt="image.png" src="https://upload-images.jianshu.io/upload_images/1929342-6d231bfbf433488c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img alt="image.png" src="https://upload-images.jianshu.io/upload_images/1929342-12ff5efa5ba2c85a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-2d67062f2ff6db77.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-13815b605356d42d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>下载下来后，得到的文件目录为：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-c833b6cba29be108.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>将下载好的文件改一下名字，就叫bootstrap，拷贝到项目的根目录：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-6b99adad0f0943de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>然后，打开user.php，引入核心的css文件和js文件。</p>
+<pre><code>&lt;!-- 引入bootstrap的核心资源文件 --&gt;
+&lt;link rel="stylesheet" type="text/css" href="bootstrap\css\bootstrap.min.css" /&gt;
+&lt;script type="text/javascript" src="jquery-easyui-1.3.3/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="bootstrap\js\bootstrap.min.js"&gt;&lt;/script&gt;</code></pre>
+<p>根据需求，从<a href="https://v3.bootcss.com/css/"><u>https://v3.bootcss.com/css/</u></a></p>
+<p>查看你想要的样式，然后复制粘贴到你的页面即可。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-3badebc6ae39f900.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+</div>
+</body>
+</html>
+

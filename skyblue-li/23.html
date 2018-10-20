@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【手把手】JavaWeb 入门级项目实战 -- 文章发布系统 （第九节）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><h3 id="根据静态页面完成javabean设计">1. 根据静态页面完成JavaBean设计</h3>
+<p>在上一节中，我们完成了文章封面的制作，这些都属于静态页面的部分。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-21c59f489f7a7c29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>从图片中可以看到，一篇文章的主要信息有：文章标题，文章名称，作者，还有摘要描述。</p>
+<p>在<a href="http://www.jianshu.com/p/6fb9c075d239">《用大白话聊聊JavaSE -- 如何理解Java Bean（一）》</a>中，我们已经讨论关于JavaBean的一些问题。</p>
+<p>一般来说，JavaBean分为必要字段和辅助字段，文章标题，文章名称，作者，还有摘要描述，还有文章内容这些，应该属于必要字段的范畴。</p>
+<p>至于辅助字段，我就不搞那么复杂了，简单设置几个吧，比如发布时间，最后更新时间，是否发布，是否删除。</p>
+<p>当然，我们还需要知道这篇文章是谁写的，所以还要再加一个userid字段，这样的话才能和user表关联起来。</p>
+<p>最后，还需要有一个分类字段，一篇文章，肯定是属于某一个类别的，所以这个也需要加上。</p>
+<p>嗯，就添加这几个辅助字段吧，我们弄简单一点。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-3b2cfd2d20f7fcd2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>我们在bean包里面新建一个Article类。</p>
+<p>设置属性如下：</p>
+<pre><code>package bean;
+
+import java.util.Date;
+
+import annotation.Column;
+import annotation.Table;
+
+@Table(tableName = "t_article")
+public class Article {
+    
+    @Column(field = "id" , type = "varchar(100)" , primaryKey = true)
+    private String id; //主键
+    
+    @Column(field = "header" , type = "varchar(100)")
+    private String header; //标题
+    
+    @Column(field = "name" , type = "varchar(60)")
+    private String name; //文章名称
+    
+    @Column(field = "content" , type = "text")
+    private String content; //文章内容
+     
+    @Column(field = "author" , type = "varchar(30)")
+    private String author; //作者
+    
+    @Column(field = "description" , type = "varchar(100)")
+    private String description; //概要
+    
+    @Column(field = "is_published" , type = "int(1)")
+    private Integer isPublished; //是否发布 0 未发布 1 发布
+    
+    @Column(field = "is_delete" , type = "int(1)")
+    private Integer isDelete;      //是否删除   0 未删除 1 已删除
+    
+    @Column(field = "create_time" , type = "datetime")
+    private Date createTime;//创建时间
+    
+    @Column(field = "update_time" , type = "timestamp" , defaultNull = false)
+    private Date updateTime;//最后更新时间
+    
+    @Column(field = "user_id" , type = "varchar(100)" , defaultNull = false)
+    private String userId;//作者id
+    
+    @Column(field = "category_id" , type = "int(2)" , defaultNull = false)
+    private Integer categoryId;//分类ID
+
+    
+}</code></pre>
+<p>然后，别忘了生成get，set以及toString方法。</p>
+<h3 id="mysql建表">2. Mysql建表</h3>
+<h4 id="文章表">2.1 文章表</h4>
+<p>在TestMain方法中再生成一下sql语句。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-a90518606ff9fcb9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>package test;
+
+import bean.Article;
+import util.TableUtils;
+
+public class TestMain {
+    public static void main(String[] args) {
+        String sql = TableUtils.getCreateTableSQl(Article.class);
+        System.out.println(sql);
+    }
+}</code></pre>
+<p>运行</p>
+<p>这是生成出来的sql语句</p>
+<pre><code>DROP TABLE IF EXISTS t_article;
+DROP TABLE IF EXISTS t_article;
+create table t_article(
+    id varchar(100) DEFAULT NULL,
+    header varchar(100) DEFAULT NULL,
+    name varchar(60) DEFAULT NULL,
+    content text DEFAULT NULL,
+    author varchar(30) DEFAULT NULL,
+    description varchar(100) DEFAULT NULL,
+    is_published int(1) DEFAULT NULL,
+    is_delete int(1) DEFAULT NULL,
+    create_time datetime DEFAULT NULL,
+    update_time timestamp NOT NULL,
+    user_id varchar(100) NOT NULL,
+    category_id int(2) NOT NULL,
+
+) DEFAULT CHARSET=utf8
+</code></pre>
+<p>因为 update_time 是timestamp类型，也就是时间戳，那么我们给他一个默认值，默认就是当前时间。</p>
+<p>改成：</p>
+<p>update_time timestamp NOT NULL<br/>
+DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,</p>
+<p>在mysql数据库里面运行一下，发现报错了</p>
+<p>[Err] 1064 - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') DEFAULT CHARSET=utf8' at line 13</p>
+<p>哦，原来在属性的最后一行不能有逗号。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-1912416d8059ebb6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>看来之前写的方法还有点问题，这边我们先把逗号去掉吧。</p>
+<p>再次运行sql语句，OK，成功建表了。</p>
+<h3 id="制造测试数据juint初探">3. 制造测试数据，JUint初探</h3>
+<p>接下来，我们来虚拟一些数据。</p>
+<p>我们在test包下新建一个类，叫做TestInsertOperation，就是测试INSERT操作的意思。</p>
+<p>我们用JUint来测试。</p>
+<p>JUnit是一个基于Java语言的单元测试框架，用起来比较方便。它的源代码很轻巧，而且优雅地运用了多种设计模式，应该来说，这是一个非常优秀的框架。</p>
+<p>首先在这个TestInsertOperation类中添加一个方法</p>
+<pre><code>/**
+ *  测试：给文章插入数据
+ */
+@Test
+public void insertArticle(){
+    
+}</code></pre>
+<p>@Test是一个注解，加上它以后，才会被JUint测试框架识别。</p>
+<p>把光标放在@Test上面，<strong>ctrl + 1</strong></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-678756959d19cdda.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>这个东西就跳出来了，点击第一项，JUint的依赖包就被加载进来了。</p>
+<p>接下来，在测试方法 insertArticle 中写上测试代码:</p>
+<pre><code>String sql = "INSERT INTO t_article(id,header,name,content,author,"
+            + "description,is_published,is_delete,create_time,update_time"
+            + ",user_id,category_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?) ";
+String id = UUID.randomUUID().toString(); //主键
+String header = "Java Web实用技术";
+String name  = "如何将MyEclipse项目导入eclipse";
+String content = "我们经常会在网上下载一些开源项目，或者从别的地方迁移一些项目进来，但经常会发现导入后各种报错。这是初学java肯定会遇到的问题，本文对一些常见的处理方案做一个总结。（本文将MyEclipse项目导入eclipse的过程为例，其他情况也可参考这个流程）";
+String author = "Jack";
+String description = "解决项目导入的冲突问题...";
+int isPublished = 1 ;
+int isDelete = 0;
+String create_time = "2016-10-19 10:43:10";
+String update_time = "2016-10-19 10:43:10";
+String userId = "319600c3-550a-4f9f-80cf-deebe2376528";
+int categoryId = 2;
+DataBaseUtils.update(sql, id,header,name,content,author,description,isPublished,isDelete,create_time,update_time,userId,categoryId);
+System.out.println("新增成功！");</code></pre>
+<p>鼠标双击方法名</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-6bc07ba69f4a17a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>按一下F11，开始测试（如果F11不起作用，那么就右键，Run As， JUnit Test）</p>
+<p>测试结果：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-fefc08f75b311b4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>OK，没有错误。</p>
+<p>控制台也没有报错，而且成功打印了 <strong>"新增成功！"</strong> 这几个字。</p>
+<p>我已经在库里查到这条数据了，现在，用jdbc的方式将刚刚插入的数据查询出来。</p>
+<p>在库里看到它的 ID 为 2145ed72-164a-401c-af29-248625a775b8。</p>
+<p>好的，现在新写一个方法来获取这条数据：</p>
+<pre><code>public void getArticle(){
+    String sql = "select * from t_article where id = ?";
+    Article article = DataBaseUtils.queryForBean(sql, Article.class, "2145ed72-164a-401c-af29-248625a775b8");
+    System.out.println(article);
+}</code></pre>
+<p>测试结果：</p>
+<p>Article [ id = 2145ed72-164a-401c-af29-248625a775b8,<br/>
+header = Java Web实用技术,<br/>
+name = 如何将MyEclipse项目导入eclipse,<br/>
+content = 我们经常会在网上下载一些开源项目，或者从别的地方迁移一些项目进来，但经常会发现导入后各种报错。这是初学java肯定会遇到的问题，本文对一些常见的处理方案做一个总结。（本文将MyEclipse项目导入eclipse的过程为例，其他情况也可参考这个流程）,<br/>
+author = Jack,<br/>
+description = 解决项目导入的冲突问题...,<br/>
+isPublished = 1,<br/>
+isDelete = 0,<br/>
+createTime = Wed Oct 19 10:43:10 CST 2016,<br/>
+updateTime = Wed Oct 19 10:43:10 CST 2016,<br/>
+userId = 319600c3-550a-4f9f-80cf-deebe2376528,<br/>
+categoryId = 2 ]</p>
+<p>这样就成功了。</p>
+<h4 id="分类表">2.2 分类表</h4>
+<p>分类表的话比较简单，为了简单起见，我们就不写JavaBean了，直接在mysql中建表吧。</p>
+<p>建表语句：</p>
+<pre><code>DROP TABLE IF EXISTS `t_category`;
+CREATE TABLE `t_category` (
+  `category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;</code></pre>
+<p>ID是自增长的。</p>
+<p>制造数据：</p>
+<pre><code>INSERT INTO `t_category` VALUES ('1', '连载小说');
+INSERT INTO `t_category` VALUES ('2', '编程代码类');
+INSERT INTO `t_category` VALUES ('3', '生活感悟');</code></pre>
+<p>insert 操作可以直接在mysql中进行操作，也可以用jdbc来操作。</p>
+<p>jdbc操作的代码如下</p>
+<pre><code>/**
+ * 插入分类数据
+ */
+@Test
+public void insertCategory(){
+    DataBaseUtils.update("insert into t_category set category_name = ?", "连载小说");
+    DataBaseUtils.update("insert into t_category set category_name = ?", "编程代码类");
+    DataBaseUtils.update("insert into t_category set category_name = ?", "生活感悟");
+}</code></pre>
+<p>测试一下就行了。</p>
+<p>好的，插入完毕后，我们新建一个测试方法来查询一下。</p>
+<pre><code>/**
+ * 获取分类列表
+ */
+@Test
+public void getCategoryList(){
+    String sql = "select * from t_category where 1 = 1";
+    List list = DataBaseUtils.queryForList(sql);
+    System.out.println(list);
+}</code></pre>
+<p>结果：</p>
+<p>[ {category_name=连载小说, category_id=1},<br/>
+{category_name=编程代码类, category_id=2},<br/>
+{category_name=生活感悟, category_id=3} ]</p>
+<p>嗯，OK了。</p>
+<h3 id="service层开发">4. service层开发</h3>
+<p>上面的测试代码主要是dao部分的，但因为本项目省去了dao层，所以，有什么操作的话，我们直接在service层解决掉算了。</p>
+<p>新建一个 ArticleService 类</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-7bcacd37904854a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>首页的文章列表：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-9fbe7602a5c9bc4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>从静态页面中，我们可以看到，文章被分为几个不同的类别，比如连载小说，就是一个单一的类别，我们应该是通过类别去加载相应的文章。</p>
+<p>在数据库表中，连载小说的分类ID为1，那么我们如果想要查询出该分类下的文章，就会写出这样的sql语句：</p>
+<p><strong>select * from t_article where category_id = 1;</strong></p>
+<p>我们先不管到底怎么和首页对接的，先把后台逻辑写好再说。</p>
+<p>在 ArticleService 类中定义一个查询方法</p>
+<pre><code>/**
+ * 通过类别获取文章列表
+ * @param categoryId
+ * @param start 
+ * @param end  
+ */
+public List&lt;Map&lt;String,Object&gt;&gt; getArticlesByCategoryId(Integer categoryId,Integer start,Integer end){
+    String sql = "select id,header,name,author,"
+        + "description from t_article where 1 = 1 "
+        + " and is_delete = 0"
+        + " and is_published = 1"
+        + " and category_id = ?"
+        + "  order by update_time desc limit ?,?";
+    return DataBaseUtils.queryForList(sql, categoryId,start,end);
+}</code></pre>
+<p>测试代码：</p>
+<pre><code>ArticleService ArticleService = new ArticleService();
+List list = ArticleService.getArticlesByCategoryId(2,0,10);
+System.out.println(list);</code></pre>
+<p>我测试了一下，应该没问题。sql查询的话，我做了一个简单的排序，就是根据最后更新时间倒序排序。</p>
+<p>相信你也已经看出来了，因为我们已经有了 DataBaseUtils 这个工具类，所以大大减少了我们的java代码。</p>
+<p>不然的话，我们还需要手动去获取连接，然后生成 PreparedStatement 的实例，一大堆 try catch ，最后还要关闭连接。</p>
+<p>有了 DataBaseUtils ，这些重复的代码就可以省略了。</p>
+<p>在这个 getArticlesByCategoryId 方法中，我故意没有把文章内容查询出来。</p>
+<p>原因很简单，因为文章内容不需要展示在首页，我就是查询出来也没用。</p>
+<p>我把id查出来了，这样的话，当用户通过点击文章封面，进入详情页的时候，就可以获取文章id，有了这个id，我们是不是就可以去数据库把文章内容给查出来了呢？</p>
+<p>所以，我们肯定还需要一个方法，就是通过文章id查询出文章内容的方法。</p>
+<p>代码：</p>
+<pre><code>/**
+ * 通过文章id获取文章内容
+ * @param id
+ * @return
+ */
+public List&lt;Map&lt;String,Object&gt;&gt; getContentByArticleId(String id){
+    String sql = "select content from t_article where id = ?";
+    return DataBaseUtils.queryForList(sql,id);
+}</code></pre>
+<p>测试了一下，也是没问题的哈。</p>
+<h3 id="与前台页面对接">5. 与前台页面对接</h3>
+<p>好的，后台已经写好了，我们现在和前台对接一下。</p>
+<p>打开index.jsp</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-f37c4ee8e4d2c01e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>找到编程代码类：</p>
+<pre><code>&lt;div class='category'&gt;
+    &lt;div class='title'&gt;编程代码类&lt;/div&gt;
+    &lt;ul class='items'&gt;
+        &lt;li class='item'&gt;&lt;/li&gt;
+        &lt;li class='item'&gt;&lt;/li&gt;
+        &lt;div style='clear:both'&gt;&lt;/div&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+<p>现在，我们要把它变成动态的。</p>
+<p>首先，在index.jsp页面顶部的地方，导入必要的包。</p>
+<pre><code>&lt;%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%&gt;
+&lt;%@ page language="java" import="service.ArticleService" pageEncoding="UTF-8"%&gt;</code></pre>
+<p>然后，新建一个 ArticleService 的实例。</p>
+<pre><code>&lt;% ArticleService articleService = new ArticleService(); %&gt;</code></pre>
+<p>接下来，在 编程代码类 的div上方获取 list 数据。</p>
+<pre><code>&lt;%
+    //查询出编程代码类的相关文章
+    List&lt;Map&lt;String,Object&gt;&gt;  articles2 = articleService.getArticlesByCategoryId(2, 0, 6);
+    pageContext.setAttribute("articles2", articles2);
+%&gt;
+${articles2}
+&lt;div class='category'&gt;
+    &lt;div class='title'&gt;编程代码类&lt;/div&gt;
+    &lt;ul class='items'&gt;
+        &lt;li class='item'&gt;&lt;/li&gt;
+        &lt;li class='item'&gt;&lt;/li&gt;
+        &lt;div style='clear:both'&gt;&lt;/div&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+<p>pageContext是JSP九大隐式对象的一员，顾名思义，它的作用域就是当前页面。</p>
+<p>${articles2}表示在html代码中显示articles2的具体信息，注意，这个信息是Java代码获取的。</p>
+<p>我们只要刷新一下页面，这些代码逻辑就会被执行。</p>
+<p>好的，我们刷新一下。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-1e7ec21549069291.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>报错了。</p>
+<p>没关系，看看它说什么。</p>
+<p>错误信息：</p>
+<p><strong>message</strong> /index.jsp (line: 2, column: 1) Page directive must not have multiple occurrences of pageencoding</p>
+<p>哦，它说我们must not have，一定不能有。</p>
+<p>一定不能有什么呢？继续往下看。</p>
+<p>multiple occurrences of pageencoding（多个pageencoding出现）</p>
+<p>哦，一定不能出现多个 pageencoding 。</p>
+<p>我们来看看页面。</p>
+<pre><code>&lt;%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%&gt;
+&lt;%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%&gt;
+&lt;%@ page language="java" import="service.ArticleService" pageEncoding="UTF-8"%&gt;</code></pre>
+<p>嗯，我们真的定义了多个pageEncoding。</p>
+<p>好的，我们删掉多余的pageEncoding。</p>
+<pre><code>&lt;%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%&gt;
+&lt;%@ page language="java" import="java.util.*"%&gt;
+&lt;%@ page language="java" import="service.ArticleService"%&gt;</code></pre>
+<p>再来一次，刷新页面。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-0a51a610f893fade.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>效果出来了。</p>
+<p>${articles2}变成了：</p>
+<p>[{id=2145ed72-164a-401c-af29-248625a775b8, author=Jack, description=解决项目导入的冲突问题..., name=如何将MyEclipse项目导入eclipse, header=Java Web实用技术}]</p>
+<p>然后，我们需要用JSTL标签库中的一个叫做 <strong>c:forEach</strong> 标签。</p>
+<p>它的作用是循环遍历，我们直接上代码吧。</p>
+<pre><code>&lt;%
+    //查询出编程代码类的相关文章
+    List&lt;Map&lt;String,Object&gt;&gt;  articles2 = articleService.getArticlesByCategoryId(2, 0, 6);
+    pageContext.setAttribute("articles2", articles2);
+%&gt;
+
+&lt;div class='category'&gt;
+    &lt;div class='title'&gt;编程代码类&lt;/div&gt;
+    &lt;ul class='items'&gt;
+        &lt;c:forEach items="${articles2}" var="item"&gt;
+            &lt;li class='item'&gt;
+                &lt;div class='item-banner'&gt;
+                    &lt;div class='item-header'&gt;${item.header}&lt;/div&gt;
+                    &lt;div class='item-name'&gt;${item.name}&lt;/div&gt;
+                    &lt;div class='item-author'&gt;@${item.author} 著&lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class='item-description'&gt;${item.description}&lt;/div&gt;
+            &lt;/li&gt;
+        &lt;/c:forEach&gt;
+        &lt;div style='clear:both'&gt;&lt;/div&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+<p>我们用了一个forEach标签，将${articles2}进行了遍历。因为${articles2}是一个list，所以是可以遍历的。</p>
+<p>var="item" 是遍历出来的每一个对象。</p>
+<p>效果：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-6af3858d4e22e056.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>因为字数太多，加上行高的关系，整个封面被挤下来了。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-b17ab844a251ba8c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>嗯，我手动来调一下css样式吧。</p>
+<p>让文章名称强制不换行，溢出部分用 ... 显示</p>
+<pre><code>.item-name {
+    font-size: 22px;
+    line-height: 74px;
+       white-space:nowrap;
+       overflow:hidden;
+       text-overflow: ellipsis; 
+}</code></pre>
+<p>鼠标划上去的时候，显示一个 tip 提示</p>
+<pre><code>&lt;div class='item-name' title = "${item.name}"&gt;${item.name}&lt;/div&gt;</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-ccab57f062571e5f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>这样就OK了。</p>
+<p>好的，与前台对接完毕了。</p>
+<p>我又弄了几条测试数据。</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201610/945865-20161019164904217-2072493122.jpg"/></p>
+<p>假模假式的，稍微有那么点样子了。</p>
+<p>嗯，今天就到这里了，下一节咱们继续。</p>
+<p>源码：<a href="http://jacksky.d113.163ns.cn/repository/">点击下载</a></p>
+</div>
+</body>
+</html>
+

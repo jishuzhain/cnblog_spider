@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+eclipse常用快捷键
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>先打开eclipse:<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-ad5de4a2488e4d24.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>在eclipse中新建一个项目：<br/>
+在左侧空白区域右键，new -- JavaProject</p>
+<p>如果列表中没有JavaProject的话，就选择project，然后去搜索JavaProject：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-6b2117ca46cdd81a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>然后，设置项目的名称和java的版本：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-40c92192a5d1a966.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-fb68b886a55bed54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>可见，java项目默认的编译路径就是bin目录，这个我们不要去改，点击Finish完成。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-a95d0b300c6ffbf0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>然后，我们学着在这个项目中编写一个JavaBean，所谓的JavaBean，也叫作实体类。一般用来描述现实生活中，或者项目中的某个实际类型。比如，商城项目，就应该有一个商品类，Product （类名我们一般大写）</p>
+<p>在建这个商品类之前，我们需要建一个包，专门用来存放这些实体类。</p>
+<p>新建包：在项目的src上右键，New -- package：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-cb2d5cde6810196f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>com表示公共的，school一般在项目中指的是具体公司的名字，pojo表示实体类。有的公司也会写成bean、dto。</p>
+<p>然后，我们在这个包下面新建一个 Product类，在包 com.school.pojo 上右键，新建一个class：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-826696bed2e33b2f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>于是，一个商品类就建好了：</p>
+<pre><code>package com.school.pojo;
+
+public class Product {
+
+}</code></pre>
+<p>在实体类中，我们先来定义几个私有属性：</p>
+<p>1、商品ID （int）<br/>
+2、商品名称 （String）<br/>
+3、单价 (BigDecimal)<br/>
+4、是否删除？ （int 0:未删除、1：已删除）<br/>
+5、发布日期 （Date）</p>
+<h3 id="快捷键alt-自动提示----使用频率最高">快捷键：Alt + ？ （自动提示） -- 使用频率最高！！！</h3>
+<h3 id="快捷键ctrl-shift-o-自动导包">快捷键：Ctrl + Shift + o （自动导包）</h3>
+<p>快速生成main方法：</p>
+<p>main + Alt + ？ + 回车</p>
+<p>快速生成System.out.println()：</p>
+<p>syso + Alt + ？ + 回车</p>
+<h3 id="快速生成getset-方法">快速生成get、set 方法：</h3>
+<p>Alt + S --&gt; generate getters and setters :</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e44ce0be53940966.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>package com.school.pojo;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+
+/**
+ * 商品类
+ * @author Administrator
+ *
+ */
+public class Product {
+    
+    /**商品ID* */
+    private Integer spid;
+    /**商品名称* */
+    private String spmc;
+    /**商品单价* */
+    private BigDecimal dj;
+    /**是否删除 0：未删除、1：已删除* */
+    private Integer isdelete = 0;
+    /**发布日期* */
+    private Date fbrq;
+    
+    public Integer getSpid() {
+        return spid;
+    }
+    public void setSpid(Integer spid) {
+        this.spid = spid;
+    }
+    public String getSpmc() {
+        return spmc;
+    }
+    public void setSpmc(String spmc) {
+        this.spmc = spmc;
+    }
+    public BigDecimal getDj() {
+        return dj;
+    }
+    public void setDj(BigDecimal dj) {
+        this.dj = dj;
+    }
+    public Integer getIsdelete() {
+        return isdelete;
+    }
+    public void setIsdelete(Integer isdelete) {
+        this.isdelete = isdelete;
+    }
+    public Date getFbrq() {
+        return fbrq;
+    }
+    public void setFbrq(Date fbrq) {
+        this.fbrq = fbrq;
+    }
+    
+    
+}</code></pre>
+<p>至此，一个完整的 <strong>javabean</strong> 就写好了。</p>
+<h3 id="快捷键alt-shift-l-自动生成接收返回值的代码">快捷键：Alt + Shift + L (自动生成接收返回值的代码)</h3>
+<p>鼠标要放在当前代码行的末尾，也就是分号所在的位置：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-c8dadf83edd4fc0e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>Alt + Shift + L ：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-9b9ce78df1893f02.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-8bd5c76e952f6be8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h3 id="快捷键ctrl-alt-上-下-快速复制一行">快捷键：Ctrl + Alt + 上 、下 （快速复制一行）</h3>
+<h3 id="快捷键alt-上-下-快速移动一行">快捷键：Alt + 上 、下 （快速移动一行）</h3>
+<p>鼠标在该行任何一个位置即可！</p>
+<p>个人网站：http://java520.top/</p>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第十七节 - 用户登录（1）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://upload-images.jianshu.io/upload_images/1929342-7a3a858a0dd07a44.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+新建一个login文件，里面存放的就是用户登录的模块。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-87669b3acae0b941.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8"&gt;
+        &lt;style type="text/css"&gt;
+            
+
+        &lt;/style&gt;
+
+        &lt;script type="text/javascript"&gt;
+            
+            
+        &lt;/script&gt;
+
+    &lt;/head&gt;
+
+
+    &lt;body&gt;
+
+
+    &lt;/body&gt;
+
+
+&lt;/html&gt;</code></pre>
+<p>在body中贴如以下代码：</p>
+<pre><code>&lt;h1&gt;用户登录&lt;/h1&gt;
+        &lt;form action="login.php" method="POST"&gt;
+
+            &lt;table&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;请输入用户名:&lt;/td&gt;
+                    &lt;td&gt;&lt;input type="text" name="username"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;请输入密码:&lt;/td&gt;
+                    &lt;td&gt;&lt;input type="password" name="password"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+
+                &lt;tr&gt;
+                    &lt;td&gt;&lt;/td&gt;
+                    &lt;td&gt;&lt;input style="float:right;" type="submit" name="submit"&gt;&lt;/input&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+
+            &lt;/table&gt;
+
+
+        &lt;/form&gt;</code></pre>
+<p>最终表单提交地址为login.php，具体的业务逻辑会在下一节给出。</p>
+</div>
+</body>
+</html>
+

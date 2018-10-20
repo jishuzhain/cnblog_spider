@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第二十三节 - PHP文件上传
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><h1 id="php文件上传">22. PHP文件上传</h1>
+<h2 id="资源文件">22.1 资源文件</h2>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-6150de1be8e0e008.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-39bb9b846ecd2eeb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-a59747e487a7bd75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+将这三个东西拷贝项目的根目录。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-e35511c9e7e513f1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>拷贝完毕后，打开upload.html:</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-966af5d833b1f982.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-d00a251ea9921d7f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+现在，我们在项目的根目录去编写一个upload.php。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-b1856cff4625da7e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+PHP给我们提供了很多关于文件上传的预定义变量，比如，上传的文件名称，文件大小，文件的类型等。</p>
+<p>以下的up_file 就是form表单中文件框的name</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-ab5c15e6a54aea4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="如何修改文件上传的大小限制">22.2 如何修改文件上传的大小限制</h2>
+<h3 id="打开xampp的安装目录在目录中搜索php.ini的配置文件">打开xampp的安装目录，在目录中搜索php.ini的配置文件。</h3>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-89591585b62e9552.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+打开php.ini , 搜索upload_max:<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-b51565876f54d9a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+再搜索post_max:<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-82c519554efa84ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+接着，重启服务器。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-63fad70911871a3d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h3 id="更改文件大小的名称">22.3 更改文件大小的名称</h3>
+<pre><code>    function getSize($fileSize){
+        if($fileSize &lt; 1024){
+            $fileSize = $fileSize . "B";
+        }else if($fileSize &lt; 1024 * 1024){
+            $fileSize = round($fileSize / 1024,2) . "KB";
+        }else if($fileSize &lt; 1024 * 1024 * 1024){
+            $fileSize = round($fileSize / 1024 / 1024,2) . "MB";
+        }else if($fileSize &lt; 1024 * 1024 * 1024 * 1024){
+            $fileSize = round($fileSize / 1024 / 1024 / 1024 , 2) . "GB";
+        }
+
+        return $fileSize;
+    }
+</code></pre>
+<h3 id="文件上传">22.4 文件上传</h3>
+<p>在PHP中，文件上传的时候会默认上传到一个临时目录，上传完毕后，如果没有及时把上传的文件从临时目录拷贝到上传的文件夹，临时文件就会被删除。</p>
+<p>所以，当文件上传成功以后，我们一定要及时地把临时拷贝到上传目录。</p>
+<pre><code>    $temp = $_FILES["up_file"]["tmp_name"];
+    move_uploaded_file($temp,"upload/" . time() . "_" .  $_FILES["up_file"]["name"]);
+
+    echo "上传成功！";</code></pre>
+<p>同时，为了解决同名文件的覆盖问题，我们最好给上传的文件名改一下名字，在文件名的前面添加一个时间戳即可。</p>
+<p>如果上传的文件是一个图片，那么，在上传成功的页面中，把上传好的图片显示在页面上，让用户知道自己上传的是什么图片。</p>
+<pre><code>$des = "upload/" . time() . "_" .  $_FILES["up_file"]["name"];
+    $temp = $_FILES["up_file"]["tmp_name"];
+    move_uploaded_file($temp,$des);
+
+    echo "上传成功！&lt;br&gt;";
+//先判断是不是图片？
+    if(strstr($_FILES["up_file"]["type"], "image")){
+        //如果是图片的话，就把上传好的图片显示在页面上
+        echo "&lt;image src='".$des."' width='360px' /&gt;";
+    }</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-492cb8e06c0dcc6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>源码获取：<a class="uri" href="https://www.jianshu.com/p/4977bd0073d5">https://www.jianshu.com/p/4977bd0073d5</a></p>
+</div>
+</body>
+</html>
+

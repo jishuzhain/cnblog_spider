@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+卸载oracle之后，如何清除注册表
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161129101354740-1486485798.png"/></p>
+<p>之前卸载了oracle，今天偶然间发现，在服务和应用程序里面，还残存着之前的oracle服务。原来，还需要去清理下注册表。</p>
+<p>在开始菜单的这个框里面</p>
+<p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161129101406677-969344504.png"/></p>
+<p>输入regedit，进入注册表。找到这个目录</p>
+<p>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services</p>
+<p>把里面的所有Oracle相关的注册信息删除掉就行了。</p>
+<p>然后重启计算机，OK了。</p>
+</div>
+</body>
+</html>
+

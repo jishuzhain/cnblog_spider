@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+SpringMVC中的@Controller和@RequestMapping到底什么鬼？
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://upload-images.jianshu.io/upload_images/1929342-ce5d9c3627a513d4.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><strong>1.1 @Controller是什么</strong><br/>
+首先看个例子：</p>
+<pre><code>@Controller
+@RequestMapping("/blog")
+public class BlogController {
+ 
+    @RequestMapping("/index")
+    public ModelAndView index(HttpServletRequest request){
+        ModelAndView mav = new ModelAndView("/index");
+        String ctx = request.getContextPath();
+        System.out.println(ctx);
+        mav.addObject("ctx", ctx);
+        return mav;
+    }
+    
+}</code></pre>
+<p>@Controller表示在tomcat启动的时候，把这个类作为一个控制器加载到Spring的Bean工厂，如果不加，就是一个普通的类，和Spring没有半毛钱关系。</p>
+<p>以下是两个常见的配置：</p>
+<pre><code>&lt;!-- 开启注解模式驱动 --&gt;
+
+&lt;mvc:annotation-driven&gt;&lt;/mvc:annotation-driven&gt;
+
+&lt;!-- 扫包 --&gt;
+
+&lt;context:component-scan base-package=*"com.blogMgr.*"*&gt;&lt;/context:component-scan&gt;</code></pre>
+<p> </p>
+<p>其中，base-package表示会扫描com.blogMgr目录下所有的包，一旦发现有个类上面加了类似于@Controller的注解，在容器启动的时候系统就会把它加载到Spring的Bean工厂，并且对其实例化。</p>
+<p> </p>
+<p>这也是为什么，我们只是写了Controller，但是从来没有在一个地方new这个Controller的原因，因为在Web容器启动的时候，这个Controller已经被Spring加载到自己的Bean工厂里面去了。</p>
+<p> </p>
+<p>这也就是所谓的Spring扫包机制。@Controller就是一个注解，当tomcat启动，我们会看到一些JAVA类挥舞着印有@Controller的旗子大喊：" Hey，SpringMVC，I'm  here,please take me to your bean factory!"</p>
+<p> </p>
+<p><strong>1.2 @RequestMapping是什么</strong></p>
+<p>在Controller中，总是会看到RequestMapping这个注解，看起来像是路径的跳转，以下列举了一个方便我们记忆的比喻。</p>
+<p> </p>
+<p>比如，有一天，我发现一部电影挺好看的，就在D盘建了一个文件夹，叫“电影”。里面放了两部电影，各自用一个文件夹来存放。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-6a382498d25ec2e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p> </p>
+<p>在上图中，我们可以看它的路径是“D:\电影”，该路径下又有一个文件夹【疯狂动物城 2016】，里面是这样的</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-73c554854d896898.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p>那么，该文件的具体路径就是“D:\电影\疯狂动物城 2016”，现在我要访问这个资源，除了双击之外，是不是只需要在地址栏里面输入：<strong>“D:\电影\疯狂动物城 2016\疯狂动物城 2016.mp4”</strong>也可以呢？</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-33ff5876b7e3e6e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p> </p>
+<p>是的，当然可以。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e9cc2187dd658f51.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p>成功了，我们通过url的方式得到了我们想要的资源文件！</p>
+<p> </p>
+<p>现在我们把这个文件复制一份，拷贝到相同路径下</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-d78b25ec2e758d89.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p>如果我尝试将第一个MP4文件的名字也改为“疯狂动物城 2016.mp4”,则会弹出提示如下</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-745eb2e79e387f0d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p>可见，在同一个路径下，不能有两个重名的文件。</p>
+<p> </p>
+<p>同理，如果我在同一个Controller里面设置两个相同的RequestMapping</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-77187cf404570e9e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p> </p>
+<p>编译是可以通过的，但是当我启动tomcat后，</p>
+<p>我通过url “http://localhost:8088/BlogMgr/blog/index”来访问，就会报错：</p>
+<p>org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping#0': Invocation of init method failed; nested exception is java.lang.IllegalStateException: Ambiguous mapping found. Cannot map 'blogController' bean method</p>
+<p> </p>
+<p>Ambiguous mapping found表示有一个路径模棱两可，也就是路径重名了，系统无法进行映射，所以报错了。这个和无法在同一个文件夹下面创建两个同名文件，是一个道理。</p>
+<p> </p>
+<p>那么，如果我一定要再创建一个“疯狂动物城 2016.mp4”的文件该怎么办呢</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-4186ef5c2af6db22.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-0dcf92f81b02bb20.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p> </p>
+<p>然后，我把这个文件放在另一个文件夹里面就可以了。</p>
+<p> </p>
+<p>同理，我也可以另外建一个Controller，Controller类上面的RequestMapping叫“/blog2”,再在里面写一个一模一样的RequestMapping就肯定没有问题了。</p>
+<p> </p>
+<p>小结</p>
+<p>一个web项目本身就是一个系统，和操作系统一样，可以把项目当做一个系统，一个应用程序。人为什么要使用电脑，因为电脑可以</p>
+<p> </p>
+<p>1.给我们想要的资源（比如.avi）</p>
+<p>2.帮我们做事。</p>
+<p> </p>
+<p>在一个系统中，如果没有图形界面，我们要访问一个资源，必然是通过一个黑窗口来访问的，就是通过路径来访问的。<strong>一个B/S架构的web项目，就是一个类似于命令行一样的应用程序，我们唯有通过url，也就是路径去获得我们想要的资源和服务。</strong></p>
+<p> </p>
+<p>再来看RequestMapping，最终对应的必然是一个<strong>方法</strong>，方法的功能无非就是进行一些业务的操作，或者返回一个什么东西。</p>
+<p> </p>
+<p>比如</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-1caf88af8302fa11.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/> </p>
+<p> </p>
+<p>我们就是通过这个方法获得了想要的jsp页面，RequestMapping的作用就是提供了一个句柄，让我们可以访问到对应的<strong>方法</strong>，最终获得我们想要的东西。综上所述，RequestMapping就是一个映射路径。</p>
+<p>  </p>
+<p><strong>1.3 @ResponseBody的作用</strong><br/>
+在Controller里面，我们经常可以看到@ResponseBody这个注解，它的意思很简单，就是说明这个方法返回的东西会通过IO流的方式写入到浏览器。</p>
+<p>比如我们写一个方法：</p>
+<pre><code>@RequestMapping("/testResponseBody")
+@ResponseBody
+public String testResponseBody(HttpServletRequest request){
+    return "&lt;h1 style='color:lightGreen'&gt;Hello Web!&lt;/h1&gt;";
+}</code></pre>
+<p>最终在浏览器获得的效果是这样的：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-63ee3506790c4437.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+</div>
+</body>
+</html>
+

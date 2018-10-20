@@ -1,0 +1,19 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【406错误】 The resource identified by this request is only capable of generating responses with characteristics not acceptable according to the request "accept" headers.
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>今天遇到一个奇怪的错误，关于Springmvc的，我明明在Controller方法中写了@ResponseBody，返回一个Map，结果报了406错误。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e4e0c125cf45dd2e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>结果发现，少了一个jar包：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-144cc4441590cb05.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>加上去就没事了。</p>
+</div>
+</body>
+</html>
+

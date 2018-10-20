@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+小兔Java教程 - 三分钟学会Java文件上传
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://upload-images.jianshu.io/upload_images/1929342-472898b6f765c8ab.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>今天群里正好有人问起了Java文件上传的事情，本来这是Java里面的知识点，而我目前最主要的精力还是放在了JS的部分。不过反正也不麻烦，我就专门开一贴来聊聊Java文件上传的基本实现方法吧。</p>
+<p>话不多说，直接开始。</p>
+<p>第一步，新建一个空白的web项目。开发工具我还是用的eclipse，我不喜欢用IDEAL。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-5deb6427b0f29383.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>接下来，编写index.jsp</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-573c3eb90e94c4de.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;
+&lt;title&gt;Java文件上传&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>body里面就简单弄一个上传框了，上传的服务器地址为service/upload.jsp，也就是WebContent目录下，一个叫做service文件夹里面的upload.jsp。</p>
+<p>JSP就是Servlet，也就是所谓的服务器程序。它既可以做表现层，也可以做服务层。</p>
+<p>代码：</p>
+<pre><code>&lt;h1&gt;文件上传&lt;/h1&gt;
+
+&lt;h1&gt;文件上传&lt;/h1&gt;
+&lt;form action="service/upload.jsp" method="post" enctype="multipart/form-data"&gt;
+    &lt;input type="file" name="file"&gt;
+    &lt;input type="submit" value="文件上传"&gt; 
+&lt;/form&gt;</code></pre>
+<p>接下来，导入两个jar包，分别是 <strong>common-fileupload-1.2.jar </strong>和 <strong>commons-io-2.0.1.jar</strong>。</p>
+<p><strong><img src="https://upload-images.jianshu.io/upload_images/1929342-b7d32c755f8784d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></strong></p>
+<p>第二步，编写文件上传的服务类，也就是服务器端了。（我就直接写JSP了，懒得写Servlet）</p>
+<p>先在WebContent目录下增加一个service文件夹,再在里面新建一个upload.jsp。</p>
+<p><strong><img src="https://upload-images.jianshu.io/upload_images/1929342-2a844a7d6b8727a6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></strong></p>
+<p>为了看一下效果，我们再导入一个操作JSON的jar包。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-4d45ff4aff48178a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>然后，在JSP页面导包：</p>
+<pre><code>&lt;%@page import="org.apache.struts2.json.JSONUtil"%&gt;
+&lt;%@page import="java.io.File"%&gt;
+&lt;%@page import="org.apache.commons.fileupload.FileItem"%&gt;
+&lt;%@page import="org.apache.commons.fileupload.servlet.ServletFileUpload"%&gt;
+&lt;%@page import="org.apache.commons.fileupload.disk.DiskFileItemFactory"%&gt;
+&lt;%@page import="org.apache.commons.fileupload.FileItemFactory"%&gt;
+&lt;%@page import="java.text.DecimalFormat"%&gt;
+&lt;%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%&gt;</code></pre>
+<p>接下来，要在JSP页面写Java代码，先弄一对尖括号，Java代码就写在里面：</p>
+<pre><code>&lt;%
+
+ 
+%&gt;</code></pre>
+<p><strong>01、获取文件上传的真实路径（就是你要把文件保存在项目的什么地方？）</strong></p>
+<pre><code>//获取文件的上传的具体目录，就是你的web项目的真实路径
+String realPath = request.getSession().getServletContext().getRealPath("/");
+//定义上传的目录
+String dirPath = realPath+"/upload";
+File dirFile = new File(dirPath);</code></pre>
+<p><strong>02、如果该路径不存在就自动创建</strong></p>
+<pre><code>//自动创建上传的目录
+if(!dirFile.exists())dirFile.mkdirs();</code></pre>
+<p>我们把上传的文件放在WebContent目录下，也就是项目根路径下的一个叫做upload的文件夹内，如果没有，就自动创建一个。</p>
+<p><strong>03、进行上传操作，文件名用UUID</strong></p>
+<pre><code>//上传操作  
+FileItemFactory factory = new DiskFileItemFactory();  
+ServletFileUpload upload = new ServletFileUpload(factory);  
+String fileName = null;
+HashMap&lt;String,Object&gt; map = new HashMap&lt;String,Object&gt;();
+    try{  
+     List items = upload.parseRequest(request);
+  if(null != items){  
+         Iterator itr = items.iterator();  
+         while(itr.hasNext()){  
+             FileItem item = (FileItem)itr.next();  
+             if(item.isFormField()){  
+                 continue;  
+             }else{  
+                fileName = UUID.randomUUID().toString()+getExt(item.getName());
+                //上传文件的目录
+                File savedFile = new File(dirPath,fileName);  
+                item.write(savedFile);  
+                map.put("name",item.getName());//文件的重视名称
+                map.put("size",item.getSize());//文件的真实大小
+                map.put("sizeString",countFileSize(item.getSize()));//获取文件转换以后的大写
+                map.put("url","upload/"+fileName);//获取文件的具体服务器的目录
+             }  
+         }  
+  }  
+}catch(Exception e){  
+     e.printStackTrace();  
+}</code></pre>
+<p>最后，在新的页面打印文件的具体信息：</p>
+<pre><code>out.print(JSONUtil.serialize(map));</code></pre>
+<p>辅助函数：</p>
+<pre><code>&lt;%!
+/**
+ * 文件大小转换成格式化的字符串
+ */
+public static String countFileSize(long fileSize) {
+    String fileSizeString = "";
+    try {
+        DecimalFormat df = new DecimalFormat("#.00");
+        long fileS = fileSize;
+        if (fileS == 0) {
+            fileSizeString = "0KB";
+        } else if (fileS &lt; 1024) {
+            fileSizeString = df.format((double) fileS) + "B";
+        } else if (fileS &lt; 1048576) {
+            fileSizeString = df.format((double) fileS / 1024) + "KB";
+        } else if (fileS &lt; 1073741824) {
+            fileSizeString = df
+                    .format(((double) fileS / 1024 / 1024) - 0.01)
+                    + "MB";
+        } else {
+            fileSizeString = df.format((double) fileS / 1024 / 1024 / 1024)
+                    + "G";
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return fileSizeString;
+}
+
+
+/**
+ * 获取一个文件的后缀(带有点)
+ * 
+ * @param fileName
+ *            文件名
+ * @return 返回文件的后缀
+ */
+public static String getExt(String fileName) {
+    int pos = fileName.lastIndexOf(".");
+    if (pos == -1)
+        return "";
+    return fileName.substring(pos, fileName.length());
+}
+
+/**
+ * 获取一个文件的后缀(不带有点)
+ * 
+ * @param fileName
+ *            文件名
+ * @return 返回文件的后缀
+ */
+public static String getExtNoPoint(String fileName) {
+    if (fileName.lastIndexOf(".") == -1)
+        return "";
+    int pos = fileName.lastIndexOf(".") + 1;
+    return fileName.substring(pos, fileName.length());
+}
+%&gt;</code></pre>
+<p>OK，现在启动tomcat服务器。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e0a4c9457f944179.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>没报错。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-f2daf7ec0320508a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>因为在web.xml里面配置了欢迎页，所以直接访问。</p>
+<p><a href="http://localhost/upload/">http://localhost/upload</a></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-c106424c9f2ae035.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>随便上传一张图片，点击文件上传，</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-48a77a597a42b312.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>报错了，看样子还是缺少jar包。</p>
+<p>缺了xwork-core-2.3.15.1.jar 这个包，貌似这两包</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-de6f39b8402dc4cf.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>是有依赖关系的，其实，这里只是为了把文件信息转成JSON格式，如果你有其他好用的jar包的话，也可以，不一定非要用这两个jar包。</p>
+<p>导进去，重启tomcat，上传文件，就OK了。</p>
+<p>打印出来的信息：</p>
+<p>{"name":"1929342-c2daab1a3c58006d.jpg","sizeString":"564.08KB","url":"upload/b4a08821-3d1a-41e6-b6e4-7985487513b0.jpg","size":577614}</p>
+<p>再去发布目录看看</p>
+<p>果然，它创建了一个upload文件夹：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-3ac743f6ed8cc603.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>图片也成功上传了~</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-eb36a772ac624495.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>好的，本文就介绍到这里，至于图片的真实路径，一般来说你要保存到数据库里面的。我个人不建议通过IO流的方式直接把图片保存到数据库，如果项目很大，你的数据库动辄几百个G，有点吃不消的。还是把图片放在硬盘上吧，如果要分布式，再另想办法，比如那个ngx啥的。</p>
+<p>源码地址：http://pan.baidu.com/s/1b7E1oa<br/>
+个人博客：http://www.xiaotublog.com/index.html</p>
+</div>
+</body>
+</html>
+

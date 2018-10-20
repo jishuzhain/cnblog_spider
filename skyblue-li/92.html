@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第十九节 - session的使用: 让服务器知道你是谁？
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://upload-images.jianshu.io/upload_images/1929342-3dea48ec273a033d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+因为HTTP请求是一种无状态的请求，所谓无状态，就是服务器不会记录下你本次请求的信息。http它是基于请求 - 相应模式的一种数据传输协议。就是说，你发送一个请求，我服务器给你一个响应，这件事情就算完了。无状态也就是一种无记忆的方式。</p>
+<p>Session的作用就是，临时在服务器端记录下你用户的某些数据，方便用户在之后的操作中直接调用。</p>
+<p>如果不用session的技术，那么用户不管做什么操作，都需要重新认证用户名和密码。</p>
+<p>可是，如果用了session，只要用户浏览器不关，服务器就能够记住你的身份信息，以便之后的操作来调用。</p>
+<p>Session的生命周期是和浏览器相关的，浏览器一旦关闭，那么服务器就会清除掉本次的session。</p>
+<p>在本系统中，如何去运用这个session？</p>
+<p>打开login2.php，在代码的最后，当用户登录验证成功后，我们就把用户名存放到session中去，保证之后的操作，服务器认为当前登录人的信息是有效的。</p>
+<pre><code>session_start(); // 使用session之前，我们必须要用session_start函数来开启session
+$_SESSION["username"] = $username;</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-839e267566836406.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>回到login2.html中，把登录成功后的跳转地址改为 ../main.php<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-ea71fa218adc5d17.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+把这里的main.html后缀名改为.php<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-acea2ee95e5c2932.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>打开main.php</p>
+<p>在这个文件的顶部，添加启用session的代码。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-113912e4f3e76a40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+然后在这个地方：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-1e903cb7d9dd0c90.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+超级管理员不能在页面里面写死，而应该用php代码获取session中的username，贴到这个地方。</p>
+<p>把超级管理员替换成以下代码：</p>
+<pre><code>&lt;?php  echo $_SESSION["username"]; ?&gt;</code></pre>
+<p>把存放到session中的username贴过来。</p>
+<p>现在还有一个问题，如果用户没有登录，也可以访问到main.php页面，这是不对的。</p>
+<p>那如何去判断用户是否登录呢？是不是只要去看session的username存在还是不存在？</p>
+<p>如果session当中没有username，那么就跳转到登录界面。</p>
+<pre><code> &lt;script type="text/javascript"&gt;
+
+            &lt;?php
+
+
+                if(!isset($_SESSION["username"])){
+                    echo "location.href='login/login2.html';";
+                }
+
+            ?&gt;
+
+
+        &lt;/script&gt;</code></pre>
+<p>源码获取：<a class="uri" href="https://www.jianshu.com/p/4977bd0073d5">https://www.jianshu.com/p/4977bd0073d5</a></p>
+</div>
+</body>
+</html>
+

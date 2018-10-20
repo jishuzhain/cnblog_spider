@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+JavaScript学习（一） ——  环境搭建与JavaScript初探
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://images2015.cnblogs.com/blog/945865/201611/945865-20161122094147143-1580802952.png"/></p>
+<h1 id="开发环境搭建">1.开发环境搭建</h1>
+<p>本系列教程的开发工具，我们采用HBuilder。</p>
+<p>可以去网上下载最新的版本，然后解压一下就能直接用了。学习JavaScript，环境搭建是非常简单的，或者说，只要你有一个浏览器，一个记事本就行了，不存在环境搭建的问题。而且，通过运行浏览器，立刻就能看到效果，这一点比较Java要方便很多。省去了很多繁杂的操作，如果你正打算转行从事程序猿这个职业，不妨以JavaScript为切入点，从而发现编程的乐趣。当你深刻理解了JavaScript的思想，其他任何面向对象的语言都是大同小异的。</p>
+<h1 id="javascript初探">2.JavaScript初探</h1>
+<h3 id="基本概念">2.1 基本概念</h3>
+<p>一个网页，一般来说，分为Html，css，还有JavaScript。如果说Html是网页的骨架，那么css就是它的的外衣。JavaScript则是一个网页的能源，就是专门负责让网页动起来的必不可少的因素。</p>
+<h3 id="基础核心">2.2 基础核心</h3>
+<p>作为一门基于对象的语言，JavaScript也和其他任何一门面向对象的语言一样，有着对象的概念。其实，就我看来，我们很多人在学习的过程中，都情不自禁地把简单的东西复杂化了，总想着去归类，最后把PPT做得很漂亮，理论说起来一套一套的。大纲弄得有模有样，条理清清楚楚，任何教科书，培训基本都是如此。其实在我看来，没必要搞得这么复杂，一下子弄这么多，我也记不住啊，难道你就非得拿着一本字典跟我一页一页地讲嘛？。JavaScript学习，无非都是围绕着对象和属性两个方面来兜圈子罢了。万变不离其宗。</p>
+<p>在Javascript中，能点出来的，或者中括号里面的必然是属性（方法）。当然，数组不算在列。</p>
+<p>对象调用属性。</p>
+<p>对象调用属性。</p>
+<p>对象调用属性。</p>
+<p>整个Javascript其实翻来覆去都在围绕这个事情做文章。</p>
+<p>在今后的学习过程中，我会反复强调这个事情，因为大家的时间都很宝贵，所以我打算把重要的东西反复讲，讲到你理解为止。一遍不行就说两遍，两遍不行说三遍，直到你明白JavaScript其实就是这么回事。</p>
+<p>当你能够卸去对新东西的恐惧之后，然后才会逐渐掌握主动权，从而更加深入地学习它。</p>
+<p>我很明白，包括当初的我自己也是如此，因为不懂，所以害怕去学，怕受打击。</p>
+<p>比如Javascript，看了半天看不懂，网上找的资料也不明白是什么意思，买一本教材吧，看得我都快怀疑人生了，心想怎么这么深奥啊。</p>
+<p>后来发现，仅仅是因为我的不自信，不敢跨出第一步！</p>
+<p>如果你是初学者，请先从编写很烂的代码开始，不要害怕被嘲笑，先去做，踏出第一步再说！</p>
+<p>然后，你会渐渐发现乐趣的，只要你不断地总结，不断地总结，总有一天，你会有一种感觉的。就是一种仿佛什么事情都难不住你的感觉，这并非你自信心膨胀，而是你勇敢踏出了第一步之后，获得的内功积累。</p>
+<p>当你真的去做了之后，你就会发现，没那么难，而且你会越学越有乐趣。</p>
+<h3 id="小案例---制作一个按钮">2.3 小案例 - 制作一个按钮</h3>
+<p>代码：</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8"&gt;
+        &lt;title&gt;我的第一个html页面&lt;/title&gt;
+         
+        &lt;style type="text/css"&gt;
+            .btn {
+                height: 30px;
+                width: 100px;
+                background: #0c093e;
+                color:#fff;
+                font-family: "微软雅黑";
+                border-radius: 5px;
+                text-align: center;
+                line-height: 30px;
+                position: absolute;
+                left: 50%;
+                margin-left: -50px;
+                top: 50%;
+                margin-top: -15px;
+                cursor: pointer;
+                transition: background 1s ease;
+            }
+             
+            .btn:hover{
+                background: #251f8c;
+            }
+        &lt;/style&gt;
+    &lt;/head&gt;
+     
+    &lt;script type="text/javascript"&gt;
+     
+        /*var person = {
+            name : "zhangsan"
+        }
+     
+        person.name = "lisi";
+         
+        person.name = "wangwu"
+         
+        alert(person.name);*/
+     
+     
+        window['onload'] = function(){
+             
+            //alert(1);
+            //1. 获取按钮的dom元素
+            var btn = document.getElementsByTagName('div')[0];
+             
+            btn.onclick = function(){
+                alert('保存成功！');
+            }
+             
+        }
+         
+        /*window.onload = function(){
+            alert(2);
+        }*/
+         
+        /*
+         *  A 1
+         *  B 2
+         *  C 1,2
+         *  D 报错
+         * 
+         * */
+    &lt;/script&gt;
+     
+    &lt;body&gt;
+        &lt;div class='btn'&gt;
+            保存
+        &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>开发工具包：<a class="uri" href="http://pan.baidu.com/s/1bo6VzbD">http://pan.baidu.com/s/1bo6VzbD</a><br/>
+视频地址：<a class="uri" href="http://pan.baidu.com/s/1jHUxLPW">http://pan.baidu.com/s/1jHUxLPW</a></p>
+</div>
+</body>
+</html>
+

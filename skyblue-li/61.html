@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【Java框架型项目从入门到装逼】第十一节  用户新增之把数据传递到后台
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>让我们继续来做“主线任务”，这一节，我们来做具体的用户新增功能。首先，为了简单起见，我把主页面改了一些，改的是列表那一块。删去了一些字段，和数据库表对应一致：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-c2900fc3a745bcd9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>现在，我们要实现一个效果，就是当我点击新增用户的按钮时，就弹出一个框来。因为我们使用的是EasyUI组件，所以我们可以用dialog组件来完成那个弹窗界面。</p>
+<p>对话框（dialog）是一个特殊类型的窗口，它在顶部有一个工具栏，在底部有一个按钮栏。默认情况下，对话框（dialog）只有一个显示在头部右侧的关闭工具。用户可以配置对话框行为来显示其他工具（比如：可折叠 collapsible、可最小化 minimizable、可最大化 maximizable，等等）。</p>
+<p>代码：</p>
+<pre><code>&lt;div id="dlg" class="easyui-dialog" title="新增用户" style="width: 300px;height: 300px;padding: 10px 20px" closed="true" buttons="#dlg-buttons"&gt;
+    &lt;form id="fm" method="post"&gt;
+        &lt;!-- 这里画了一个table --&gt;
+        &lt;table cellspacing="8px"&gt;
+            &lt;!-- 这个是table的第一行 --&gt;
+            &lt;tr&gt;
+                &lt;td&gt;用户名：&lt;/td&gt; 
+                &lt;td&gt;
+                    &lt;input type="text" id="username" name="username" class="easyui-validatebox" required="true" /&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;密码：&lt;/td&gt;
+                &lt;td&gt;
+                    &lt;input type="text" id="password" name="password" class="easyui-validatebox" required="true" /&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;!-- 这个是table的第二行 --&gt;
+            
+            &lt;tr&gt;
+                &lt;td&gt;姓名：&lt;/td&gt;
+                &lt;td&gt;
+                    &lt;input type="text" id="name" name="name" class="easyui-validatebox" required="true"/&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            
+            &lt;tr&gt;
+                &lt;td&gt;性别：&lt;/td&gt;
+                &lt;td&gt;
+                    &lt;select class="easyui-combobox" data-options="value:'男'"  style="width: 144px" id="sex"  required="true"
+                        editable="false" panelHeight="auto"&gt;
+                        &lt;option value="男"&gt;男&lt;/option&gt;
+                        &lt;option value="女"&gt;女&lt;/option&gt;
+                    &lt;/select&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            
+        &lt;/table&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+
+&lt;div id="dlg-buttons"&gt;
+    &lt;a href="javascript:saveUser()" class="easyui-linkbutton" iconCls="icon-ok"&gt;保存&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+<p>效果：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-3e8521d381d5a2eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>接下来，给新增按钮编写对应的点击事件：</p>
+<pre><code>function openUserAddPage(){
+    $("#dlg").dialog("open");
+}</code></pre>
+<p>这样一来，当我们点击按钮的时候，那个对话框就会自己跳出来哦。</p>
+<p>画好了对话框，我们需要给保存按钮写对应的函数：</p>
+<pre><code>function saveUser(){
+    var username = $('#username').val();
+    var password = $('#password').val();
+    var name = $('#name').val();
+    var sex = $('#sex').combobox('getValue');
+    
+
+    if(!username){
+        alert("用户名不能为空！");
+        return;
+    }
+    
+    if(!password){
+        alert("密码不能为空！");
+        return;
+    }
+    
+    if(!name){
+        alert("姓名不能为空！");
+        return;
+    }
+    
+    if(!password){
+        alert("性别不能为空！"); 
+        return;
+    }
+    
+    
+    
+}</code></pre>
+<p>这个saveUser函数中，首先是用jQuery去获取每个文本框或者下拉框的值，然后依次判断是否为空，如果为空，就给出对应的提示。</p>
+<p>然后，我们还需要用一个json数据将这些内容保存起来，到时候传递给后台的就是一个json数据。</p>
+<pre><code>//开始拼接json数据，为了传递给后台
+var json = {};
+json.username = username;
+json.password = password;
+json.name = name;
+json.sex = sex;
+
+console.log(json);</code></pre>
+<p>效果：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-5aa2ec0e7dc224c8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>这样一来，我们是不是可以拿到表单数据啦？OK，那么下一步，就是把这些数据传递到后台。</p>
+<p>写一个UserController，作为控制器：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-35ce290a3bead2dd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>@Controller
+public class UserController {
+    
+    @RequestMapping("/addUser")
+    public void addUser(HttpServletRequest request , HttpServletResponse response){
+        
+    }
+}</code></pre>
+<p>我们先不急着写代码，先看下这个Controller是否编写正确，于是乎，我们在里面打印一句话即可：</p>
+<pre><code>@Controller
+public class UserController {
+    
+    @RequestMapping("/addUser")
+    public void addUser(HttpServletRequest request , HttpServletResponse response){
+        System.out.println("进来咯！~~");
+    }
+}</code></pre>
+<p>让我们启动Tomcat服务器，然后打开浏览器，在地址栏输入：<br/>
+http://localhost/student/addUser.do<br/>
+为什么是.do呢？那是因为我们在web.xml中进行了配置，让springMVC只拦截*.do的请求。</p>
+<p>效果：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-970b9c9653a01345.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>成功了。</p>
+<p>接下来，用ajax传递数据给Controller</p>
+<pre><code>//使用ajax传递到后台
+$.post("addUser.do",json,function(data){
+    //这里是处理返回数据的回调函数 
+    
+},"json");</code></pre>
+<p>填写表单，点击保存按钮：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-3e6eec6bdcab9726.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>发现进来了：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-1d75abcbabad0892.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>好的，这一节我们先聊到这里。</p>
+</div>
+</body>
+</html>
+

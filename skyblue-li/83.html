@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第八节 - 部门管理模块（编写PHP程序）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>首先，在同级目录新建一个query.php文件：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-5991db167ea10f2b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+接着，去刷新页面，打开F12，NetWork，看看当前的请求能不能走到对应的php文件？<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-8f1453df79639ee2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+这就说明datagrid确实能够访问到query.php</p>
+<p>只要你的datagrid设置了分页，那么，每一次查询的时候，都会向php程序提交两个参数，分别为：page和rows。</p>
+<p>因此，我们不妨在php中去获取一下这两个参数，看看是不是真的传过来了？</p>
+<pre><code>&lt;?php
+    
+
+    $page = $_POST["page"];
+    $rows = $_POST["rows"];
+
+    echo "$page,$rows";
+
+
+?&gt;</code></pre>
+<p>刷新页面，看提交的POST请求。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-6ccc11e5e6bb938c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>可以看到，确实是传过来了。<br/>
+完整代码：</p>
+<pre><code>&lt;?php
+    
+
+    $page = $_POST["page"];
+    $rows = $_POST["rows"];
+
+    //echo "$page,$rows";
+
+    $start = ( $page - 1 ) * $rows; //获取开始的行数
+
+
+    //连接MySQL数据库
+    $conn = mysql_connect("localhost","root","");
+    $db = mysql_select_db("test",$conn);
+    mysql_query("set names utf8");
+
+
+    $resultset = mysql_query("select * from tm_dept where 1=1") or die(mysql_error());
+
+    $list = array();
+
+    $count = 0;
+
+    while($row = mysql_fetch_array($resultset)){
+        $list[$count++] = $row;
+    }
+
+
+    echo json_encode($list);
+
+
+
+
+?&gt;</code></pre>
+<p>效果：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-f8ae6706ffc671a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+</div>
+</body>
+</html>
+

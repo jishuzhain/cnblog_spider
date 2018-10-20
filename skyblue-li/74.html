@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第十六节 - 用户新增
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><h2 id="工具栏">6.1工具栏</h2>
+<pre><code>&lt;div id="toolbar"&gt;
+    
+    &lt;a href="javascript:openDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true"&gt;新建用户&lt;/a&gt;
+
+&lt;/div&gt;</code></pre>
+<h2 id="新增面板">6.2新增面板</h2>
+<pre><code>&lt;div id="dialog0" class="easyui-dialog" style="width:500px;height:300px;padding:10px 20px;" closed="true"
+           data-options="title:'用户新增'" buttons="#dialog0-buttons"&gt; 
+    &lt;!-- 在对话框中画一个简单的表达组件 --&gt;
+    &lt;form id="form0" method="post"&gt;
+        &lt;table cellspacing="5px;" cellpadding="0px"&gt;
+          &lt;tr&gt;
+            
+            &lt;td&gt;用户名：&lt;/td&gt;
+            &lt;td&gt;&lt;input type="text" id="username" name="username" class="easyui-validatebox" required="true"/&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          
+          &lt;tr&gt;
+            
+            &lt;td&gt;密码：&lt;/td&gt;
+            &lt;td&gt;&lt;input type="password" id="password" name="password" class="easyui-validatebox" required="true"/&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+
+          &lt;tr&gt;
+            
+            &lt;td&gt;昵称：&lt;/td&gt;
+            &lt;td&gt;&lt;input type="text" id="nickname" name="nickname" class="easyui-validatebox" required="true"/&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+
+
+          
+        &lt;/table&gt;
+
+    &lt;/form&gt;
+
+  &lt;/div&gt;
+
+  &lt;div id="dialog0-buttons"&gt;
+    &lt;a href="javascript:save();" class='easyui-linkbutton' iconCls="icon-ok"&gt;保存&lt;/a&gt;
+  &lt;/div&gt;</code></pre>
+<h2 id="点击新增按钮就打开新增面板">6.3点击新增按钮就打开新增面板</h2>
+<pre><code>function openDialog(){
+    
+    $("#dialog0").dialog("open");
+
+}</code></pre>
+<h2 id="保存方法">6.4保存方法</h2>
+<pre><code>//保存方法
+function save(){
+
+  $("#form0").form("submit",{
+
+    //提交的目标服务器地址
+    url : "save.php" ,
+
+    //验证表单内元素是否有效？
+    onSubmit : function(){
+        return $(this).form("validate");
+    } ,
+
+    //如果服务器成功返回数据，就会启动这个方法
+    //参数data就是服务器返回的数据
+    success : function(data){
+
+        data = eval("("+data+")");
+
+        if(data.errCode &lt; 0){
+            $.messager.alert("系统提醒",data.errMsg);
+            return;
+        }
+
+        $.messager.alert("系统提醒","保存成功！");
+$("#grid0").datagrid("reload");
+        $("#dialog0").dialog("close");
+    }
+
+  });
+
+}</code></pre>
+<h2 id="保存用户后台编写">6.5保存用户后台编写</h2>
+<p>&lt;?php</p>
+<pre><code>//连接MySQL数据库
+$conn = mysql_connect("localhost","root","");
+$db = mysql_select_db("test",$conn);
+mysql_query("set names utf8");
+
+//设置一个返回对象
+$resultData = array();
+$resultData["errCode"] = 0;
+$resultData["errMsg"] = "";
+
+
+if(isset($_POST["id"]) &amp;&amp; $_POST["id"] != null){
+
+    //修改
+
+}else{
+
+    //新增
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+    $nickname = $_POST["nickname"];
+
+    $sql = "insert into tm_users values (NULL,'$username','$password','$nickname',now(),now(),0)";
+
+    mysql_query($sql) or die(err());
+
+    echo json_encode($resultData);
+
+
+}
+
+
+function err(){
+
+    $resultData["errCode"] = -1;
+    $resultData["errMsg"] = mysql_error();
+    echo json_encode($resultData);
+    return;
+
+}</code></pre>
+<p>?&gt;</p>
+<h1 id="保存用户的时候不允许用户名重复">6.6保存用户的时候不允许用户名重复</h1>
+<h2 id="新增">6.6.1新增</h2>
+<pre><code>&lt;?php
+    
+    //连接MySQL数据库
+    $conn = mysql_connect("localhost","root","");
+    $db = mysql_select_db("test",$conn);
+    mysql_query("set names utf8");
+
+    //设置一个返回对象
+    $resultData = array();
+    $resultData["errCode"] = 0;
+    $resultData["errMsg"] = "";
+
+
+    if(isset($_POST["id"]) &amp;&amp; $_POST["id"] != null){
+
+        //修改
+
+    }else{
+
+
+        //新增
+        $username = $_POST["username"];
+        $password = $_POST["password"];
+        $nickname = $_POST["nickname"];
+
+        $sql = "insert into tm_users values (NULL,'$username','$password','$nickname',now(),now(),0)";
+
+        //用户名非重复检测
+
+        $rs = mysql_query("select count(1) as total from tm_users where username = '$username';");
+
+
+        while($row = mysql_fetch_array($rs)){
+            if($row["total"] &gt; 0){
+                $resultData["errCode"] = -1;
+                $resultData["errMsg"] = "用户名重复！";
+                echo json_encode($resultData);
+                return;
+            }
+        }
+
+
+        //执行新增操作
+        mysql_query($sql) or die(err());
+
+        echo json_encode($resultData);
+
+
+    }
+
+
+    function err(){
+
+        $resultData["errCode"] = -1;
+        $resultData["errMsg"] = mysql_error();
+        echo json_encode($resultData);
+        return;
+
+    }
+
+
+?&gt;</code></pre>
+<h1 id="密码加密">6.7密码加密</h1>
+<p>做一个优化，因为目前的密码虽然在页面上用 * 表示，但是只要是懂一点编程的人，都知道用浏览器的抓包工具去查看泛泰返回的数据。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-6c6c953eda2da458.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+其实，一劳永逸的方法，就是保存密码的时候就把你这个密码进行加密。这样一来，我们存到数据库里面的密码就已经是加密过的字符串。<br/>
+方法：</p>
+<pre><code>$password = md5 ( $_POST["password"] );</code></pre>
+<p>源码获取：<a class="uri" href="https://www.jianshu.com/p/4977bd0073d5">https://www.jianshu.com/p/4977bd0073d5</a></p>
+</div>
+</body>
+</html>
+

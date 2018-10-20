@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第十八节 - login.php编写
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>1.对用户名和密码进行非空判断（后台验证）</p>
+<pre><code>    $username;
+    $password;
+
+    if(isset($_POST['username']) &amp;&amp; $_POST['username'] != null){
+        $username = $_POST['username'];
+    }else{
+        echo "&lt;h2 style='color:red'&gt;用户名不能为空！&lt;/h2&gt;";
+        return;
+    }
+    
+
+    if(isset($_POST['password']) &amp;&amp; $_POST['password'] != null){
+        $password = md5($_POST['password']);
+    }else{
+        echo "&lt;h2 style='color:red'&gt;密码不能为空！&lt;/h2&gt;";
+        return;
+    }</code></pre>
+<p>2． 进行数据库链接</p>
+<pre><code>$conn = mysql_connect("localhost","root","");
+$db = mysql_select_db("test",$conn);
+mysql_query("set names utf8");</code></pre>
+<ol>
+<li>根据用户名和密码进行用户表的查询，如果用户存在，那么查询出来的数量肯定等于1，否则，认为用户名和密码错误。还有一种情况，就是单单根据用户名去查，如果查不到这个用户名，就提示用户用户名不存在。</li>
+</ol>
+<pre><code>$sql = "select count(*) as total from tm_users where username = '$username'";
+
+    $rs = mysql_query($sql);
+
+
+    while($row = mysql_fetch_array($rs)){
+        if($row["total"] != 1){
+            echo "&lt;h2 style='color:red'&gt;该用户名不存在！&lt;/h2&gt;";
+            return;
+        }
+    }
+
+    $sql = "select count(*) as total from tm_users where username = '$username' and password = '$password'";
+
+
+    $rs = mysql_query($sql);
+
+    while($row = mysql_fetch_array($rs)){
+        if($row["total"] != 1){
+            echo "&lt;h2 style='color:red'&gt;用户名或者密码错误！&lt;/h2&gt;";
+            return;
+        }
+    }
+
+
+    echo "&lt;h2 style='color:green'&gt;恭喜，登录成功！&lt;/h2&gt;";</code></pre>
+<ol>
+<li>异步登陆<br/>
+在上一节中，我们使用的是form表单提交的方式，也就是俗称的同步登陆。这样一来，如果后台不返回数据，那么用户什么都做不了。现在，我们使用sleep函数来模拟后台执行时间过长的问题。</li>
+</ol>
+<pre><code>sleep(5000);</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-49f60b94ed1d9643.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+如果因为网络等问题，后台处理请求的时间过长，用户除了等待，什么事情也做不了。这个就是同步提交的一个弊端。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-1f7f9cc01b8e5665.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+如图所示，同步就类似于打电话，如果对方不接，打电话的那个人只能一直等待，不想等了，就把电话挂了。如果是异步的方式，就好比两个人发短信，你什么时候回复，我就什么时候看，不会影响我当期所做的任何事情。</p>
+<p>现在来演示异步提交。</p>
+<h3 id="把login2.html-拷贝到这个目录">16.1 把login2.html 拷贝到这个目录：</h3>
+<p>C:\xampp\htdocs\5-7\login</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-acbc7ba6f66fa132.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>打开浏览器，访问地址：<a href="http://localhost:8080/5-7/login/login2.html"><u>http://localhost:8080/5-7/login/login2.html</u></a></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-259708f2ffa5d7d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+用户名和密码的非空判断，在前台JS中也有处理。如果用户名和密码都不为空，那么就会进行异步提交，异步提交采用的是ajax方法，在第281行：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-c350afb743d696d5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h3 id="编写login2.php">16.2 编写login2.php</h3>
+<p>先进行一下登录成功的测试：</p>
+<pre><code>&lt;?php
+    $resultData = array();
+    $resultData["errCode"] = 0;
+    $resultData["errMsg"] = "";
+
+
+    echo json_encode($resultData);
+
+?&gt;</code></pre>
+<p>啥也不干，直接返回没有错误的结果对象，然后login2.html就会进入success方法：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-9a38b145ef3d462b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+这边还做了一个小修改，当登录成功的时候，就去访问main.html。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-90720adb45f5512c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h2 id="后台非空判断">16.3 后台非空判断</h2>
+<pre><code>//后台判断用户名和密码是否为空
+    $username;
+    $password;
+
+    if(isset($_POST['account']) &amp;&amp; $_POST['account'] != null){
+        $username = $_POST['account'];
+    }else{
+        $resultData["errCode"] = -1;
+        $resultData["errMsg"] = "用户名不能为空！";
+        echo json_encode($resultData);
+        return;
+    }
+
+
+    if(isset($_POST['password']) &amp;&amp; $_POST['password'] != null){
+        $password = md5($_POST['password']);
+    }else{
+        $resultData["errCode"] = -1;
+        $resultData["errMsg"] = "密码不能为空！";
+        echo json_encode($resultData);
+        return;
+    }</code></pre>
+<h3 id="验证用户名是否存在">16.4 验证用户名是否存在？</h3>
+<pre><code>    //验证用户名是否存在？
+    $sql = "select count(*) as total from tm_users where username = '$username'";
+
+    $rs = mysql_query($sql);
+
+
+    while($row = mysql_fetch_array($rs)){
+        if($row["total"] != 1){
+            $resultData["errCode"] = -1;
+            $resultData["errMsg"] = "该用户名不存在！";
+            echo json_encode($resultData);
+            return;
+        }
+    }</code></pre>
+<h2 id="验证用户名和密码是否正确">16.5 验证用户名和密码是否正确？</h2>
+<pre><code>//验证用户名和密码是否正确？
+    $sql = "select count(*) as total from tm_users where username = '$username' and password = '$password'";
+
+
+    $rs = mysql_query($sql);
+
+    while($row = mysql_fetch_array($rs)){
+        if($row["total"] != 1){
+            $resultData["errCode"] = -1;
+            $resultData["errMsg"] = "用户名或者密码错误！";
+            echo json_encode($resultData);
+            return;
+        }
+    }</code></pre>
+<p>源码获取：<a class="uri" href="https://www.jianshu.com/p/4977bd0073d5">https://www.jianshu.com/p/4977bd0073d5</a></p>
+</div>
+</body>
+</html>
+

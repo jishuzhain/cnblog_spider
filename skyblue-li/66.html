@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第七节 - 部门管理模块（画一个datagrid表格）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>在easyui中，datagrid组件需要用一个table标签去渲染。</p>
+<pre><code>&lt;table id="grid0" title="部门管理" class="easyui-datagrid" fitColumns="true" pagination="true" rownumbers="true" url="query.php"&gt;
+
+    &lt;thead&gt;
+    
+        &lt;tr&gt;
+        
+            &lt;th field="cb" checkbox="true" align="center"&gt;&lt;/th&gt;
+            &lt;th field="id" width="30"  align="center"&gt;ID&lt;/th&gt; 
+            &lt;th field="deptid" width="80"  align="center"&gt;部门编号&lt;/th&gt;
+            &lt;th field="deptname" width="120"  align="center"&gt;部门名称&lt;/th&gt;
+            &lt;th field="createtime" width="180"  align="center"&gt;创建时间&lt;/th&gt;
+            &lt;th field="updatetime" width="180"  align="center"&gt;最后更新时间&lt;/th&gt;
+
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+
+&lt;/table&gt;</code></pre>
+<p>PS： 在easyui的表格组件中，我们唯一要关心的就是<br/>
+1.提交到什么地址： url<br/>
+2.显示哪些字段。</p>
+<pre><code>  &lt;th field="id" width="30"  align="center"&gt;ID&lt;/th&gt; </code></pre>
+<p>比如，ID字段，你需要在th中设置一个field属性，然后这个属性的值最好和数据库的那一张表的字段名保持一致！</p>
+</div>
+</body>
+</html>
+

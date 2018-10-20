@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第六节 - 部门管理模块（开始）
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>sql建表语句详见：<a class="uri" href="https://www.jianshu.com/p/c88077ed9073">https://www.jianshu.com/p/c88077ed9073</a></p>
+<p>1.新建html模板<br/>
+新建一个空白的txt文档，然后把后缀名改为.html<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-13b3841ab95b0e8b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+用任意一个编辑器打开，比如sublime，dreamweaver。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-e1cb046ea3a5c412.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+然后，在里面写上html的基本结构。</p>
+<pre><code>&lt;html&gt;
+
+    &lt;head&gt;
+        &lt;meta charset="utf-8"&gt;
+
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        中文  
+
+    &lt;/body&gt;
+
+&lt;/html&gt;</code></pre>
+<p>2.引入easyui的资源文件</p>
+<p>引入之前，先把这个easyui的资源包拷贝到01.html的同级目录：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-0a8f4d2374c1c067.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>接着，在01.html的head标签，加上以下的资源导入语句。</p>
+<pre><code>&lt;script type="text/javascript" src="jquery-easyui-1.3.3/jquery.min.js"&gt;&lt;/script&gt;
+        &lt;link rel="stylesheet" type="text/css" href="jquery-easyui-1.3.3/themes/default/easyui.css"&gt;
+        &lt;link rel="stylesheet" type="text/css" href="jquery-easyui-1.3.3/themes/icon.css"&gt;
+        &lt;script type="text/javascript" src="jquery-easyui-1.3.3/jquery.easyui.min.js"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript" src="jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript" src="jquery-easyui-1.3.3/validate.js"&gt;&lt;/script&gt;</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-4f0940c2837410b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+去刷新以下页面，看看是否资源导入成功。方法为浏览器按一下F12，打开调试界面。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-3c3e7629930e1276.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+选择Network。<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-0b16504dcdee188e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-1b9777da7c43a2ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>下载地址：<a class="uri" href="https://pan.baidu.com/s/1OXvqQwAmz7usgD4KqiUXLw">https://pan.baidu.com/s/1OXvqQwAmz7usgD4KqiUXLw</a></p>
+</div>
+</body>
+</html>
+

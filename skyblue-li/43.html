@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+开源一款简单清爽的日历组件，JavaScript版的
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p><img src="https://upload-images.jianshu.io/upload_images/1929342-19df584e33a25754.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>源码会在最后给出地址，需要的朋友自己去下载。最近项目需要做一个日程安排的功能，就是点击日历的某一天弹出一个录入页面，填完信息后保存当天的日程安排。有日程的日期会有不同的标记（比如加一个背景色啥的）。网上找了很久，都不尽如人意，于是我只好自己找点资料弄了一个。具体的页面就不给出了，关于这个日历，现在是一个单独的js组件，分享出来。</p>
+<p>调用方法：首先你的页面需要有一个div，id自己定义。</p>
+<p>比如：</p>
+<pre><code>&lt;div id="wannianli"&gt;&lt;/div&gt;</code></pre>
+<p>js代码：</p>
+<pre><code>var calender = new Calender(opts);
+
+calender.init();</code></pre>
+<h3 id="属性">属性</h3>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-ee99807c85b7fc6a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h3 id="方法">方法</h3>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-f2264afd5514786e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>范例：</p>
+<p>var calender = new Calender(<br/>
+{<br/>
+id:"wannianli",<br/>
+width:660,<br/>
+height:500,<br/>
+background:"#fff",<br/>
+color:'#222',<br/>
+monthTag:["1 月","2 月","3 月","4 月","5 月","6 月","7 月","8 月","9 月","10 月","11 月","12 月"],<br/>
+weekTag:["<font class="red">周日</font>","<font class="green">周一</font>", "<font class="green">周二</font>", "<font class="green">周三</font>", "<font class="green">周四</font>", "<font class="green">周五</font>", "<font class="red">周六</font>"],<br/>
+format:"yyyy-MM-dd",<br/>
+dbclick : function(formatStr){<br/>
+alert(formatStr);<br/>
+},<br/>
+/<em>click : function(formatStr){<br/>
+alert(formatStr);<br/>
+},</em>/<br/>
+}</p>
+<p>);</p>
+<p>calender.init(2015,1);</p>
+<p>依赖文件：jQuery.js、wannianli.css<br/>
+源码下载地址：<a class="uri" href="http://pan.baidu.com/s/1skFrxiH">http://pan.baidu.com/s/1skFrxiH</a><br/>
+个人博客：<a href="http://www.xiaotublog.com/">www.xiaotublog.com</a></p>
+</div>
+</body>
+</html>
+

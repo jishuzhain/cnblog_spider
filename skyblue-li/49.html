@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【Java框架型项目从入门到装逼】第二节 - Spring框架 AOP的丧心病狂解说，你喜欢露娜的月下无限连吗？
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>继续上一节的内容，多几个jar包：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-3b481f2dd23f57f6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>aop技术是面向切面编程思想，作为OOP的延续思想添加到企业开发中，用于弥补OOP开发过程中的缺陷而提出的编程思想。AOP底层也是面向对象；只不过面向的不是普通的Object对象，而是特殊的AOP对象。AOP的关注点是组成系统的非核心通用服务模块（比如登录检查等），相对于普通对象，aop不需要通过继承、方法调用的方式来提供功能，只需要在xml文件中以引用的方式，将非核心服务功能引用给需要改功能的核心业务逻辑对象或方法中。最终实现对象的解耦。spring 中ioc技术实现了核心业务逻辑对象之间的解耦（如LoginAction与DaoImpl）<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-86fe68d78e800d27.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>AOP可以说是Spring中最难理解的一个知识点了，你可能网上找了很多资料，也买过很多本书，但都不是很理解到底什么是AOP？我曾经也是琢磨了好久才有了一定的了解。那么，到底怎么讲这个知识点呢。来不及解释了，快上车！听完这个例子，我相信你一定会对AOP有一个非常深刻的理解！<br/>
+让我们新建一个英雄类：</p>
+<pre><code>package com.spring.bean;
+
+public class Hero {
+    
+    private String heroName;
+    private String type;
+    private String description;
+    
+    public String getHeroName() {
+        return heroName;
+    }
+    public void setHeroName(String heroName) {
+        this.heroName = heroName;
+    }
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    @Override
+    public String toString() {
+        return "Hero [heroName=" + heroName + ", type=" + type + ", description=" + description + "]";
+    }
+
+}</code></pre>
+<p>再来个露娜类，继承自英雄类：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-993f3ca8660221bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>啊啊啊，放错图片了，应该是这个：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-794ca235e769d069.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<pre><code>package com.spring.bean;
+
+public class Luna extends Hero{
+    
+    /**
+     * 秀操作
+     */
+    public void operation(){
+        System.out.println("看我月下无限连！");
+    }
+    
+    /**
+     * 跑路
+     */
+    public void run(){
+        System.out.println("我操，大空了，赶紧跑！");
+    }
+    
+    /**
+     * 发信息
+     * @param str
+     */
+    public void say(String str){
+        System.out.println(str);
+    }
+    
+}</code></pre>
+<p>可以看到，露娜类有三个方法，分别是秀操作，跑路和发信息。<br/>
+再写一个团战类：</p>
+<pre><code>package com.spring.test;
+
+import com.spring.bean.Luna;
+
+/**
+ * 团战类
+ * @author Administrator
+ *
+ */
+public class Battle {
+    
+    public void tuan(){
+        Luna luna = new Luna();
+        luna.say("上去开团！");
+        luna.operation();
+        
+    }
+    
+}</code></pre>
+<p>测试代码如下：</p>
+<pre><code>ApplicationContext context = new ClassPathXmlApplicationContext("spring-aop.xml");
+Battle battle = (Battle)context.getBean("Battle");
+battle.tuan();</code></pre>
+<p>我们用spring把Battle类配上去。</p>
+<p>spring-aop.xml</p>
+<pre><code>&lt;bean id = 'Battle' class="com.spring.test.Battle"&gt;&lt;/bean&gt;</code></pre>
+<p>运行测试代码：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-ce6e1eaaed5724dd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-ccbc7fe74ea66a3b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>在团战方法里面，我们新建一个露娜的对象，然后发出信息“上去开团”，接着又秀了一把操作。这是一个比较普通的流程。而事实上，露娜可能需要在团战前就提醒我方队友“等我集合打团”，不要人都没齐，队友就无脑往前冲。OK，我们如何通过代码来实现这个过程呢？很显然，这个过程需要在团战方法执行之前就被执行。这就需要AOP面向切面的技术了。</p>
+<p>我们需要写一个类，实现MethodBeforeAdvice接口。</p>
+<pre><code>/**
+ * Notice 定义一个通知打团的信号 - 团战之前
+ * @author Administrator
+ *
+ */
+public class BeforeTuanZhan implements MethodBeforeAdvice{
+
+    @Override
+    public void before(Method arg0, Object[] arg1, Object arg2) throws Throwable {
+        System.out.print(this.getClass().getName() + " -- ");
+        Luna luna = new Luna();
+        luna.setHeroName("露娜");
+        luna.setType("战士/法师");
+        luna.setDescription("月光女神");
+        luna.say("等我集合打团！");
+        
+    }
+    
+}</code></pre>
+<p>我们希望这个方法在团战之前就被执行，怎么做呢？没错，就是在XML文件中做如下配置：</p>
+<pre><code>&lt;bean id = 'BeforeTuanZhan' class="com.spring.service.BeforeTuanZhan"&gt;&lt;/bean&gt;
+
+&lt;aop:config&gt;
+    
+        &lt;!-- 定义所有可供露娜切入的点（方法） --&gt;
+        &lt;!-- 原则上只要时机正确，任何团战露娜都可以切进去！ --&gt;
+        &lt;aop:pointcut expression="execution(* com.spring.test.Battle.*(..))" id="pointcut"/&gt;
+        
+        &lt;aop:advisor advice-ref="BeforeTuanZhan" pointcut-ref="pointcut"/&gt;
+ 
+        
+    &lt;/aop:config&gt;</code></pre>
+<p>execution(* com.spring.test.Battle.*(..))<br/>
+这句话的含义就是，返回值为任意，com.spring.test包里面的Battle类，这个类里面所有的方法都需要切入。所谓的切入，就是在方法执行前，执行中，发生异常的时候执行某个其他的方法。执行中用的不多，一般就用另外三种情况。</p>
+<p>现在，我们重新执行测试代码：</p>
+<pre><code>ApplicationContext context = new ClassPathXmlApplicationContext("spring-aop.xml");
+Battle battle = (Battle)context.getBean("Battle");
+battle.tuan();</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-43417da177e35932.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>现在各位想一下，如果团战打赢了怎么办，是不是马上就该去推塔或者打龙啊，这个时候，如果队友团战打赢了就发呆，那就很坑了。所以呢，你这个时候就得提醒队友下一步该做什么，这个提醒的步骤是在团战方法执行结束后才发生的。</p>
+<p>我们需要新建一个AfterTuanZhan类，实现AfterReturningAdvice接口。</p>
+<pre><code>/**
+ * Notice 定义一个团战结束后的类 - 团战之后
+ * @author Administrator
+ */
+public class AfterTuanZhan implements AfterReturningAdvice{
+
+    @Override
+    public void afterReturning(Object arg0, Method arg1, Object[] arg2, Object arg3) throws Throwable {
+        System.out.print(this.getClass().getName() + " -- ");
+        Luna luna = new Luna();
+        luna.setHeroName("露娜");
+        luna.setType("战士/法师");
+        luna.setDescription("月光女神");
+        luna.say("进攻敌方防御塔！");
+    }
+    
+}</code></pre>
+<p>配置到spring-aop.xml中：</p>
+<pre><code>&lt;bean id = 'AfterTuanZhan' class="com.spring.service.AfterTuanZhan"&gt;&lt;/bean&gt;
+&lt;!-- 定义一个切面 --&gt;
+    &lt;aop:config&gt;
+    
+        &lt;!-- 定义所有可供露娜切入的点（方法） --&gt;
+        &lt;!-- 原则上只要时机正确，任何团战露娜都可以切进去！ --&gt;
+        &lt;aop:pointcut expression="execution(* com.spring.test.Battle.*(..))" id="pointcut"/&gt;
+        
+        &lt;aop:advisor advice-ref="BeforeTuanZhan" pointcut-ref="pointcut"/&gt;
+        &lt;aop:advisor advice-ref="AfterTuanZhan" pointcut-ref="pointcut"/&gt;
+        
+    &lt;/aop:config&gt;</code></pre>
+<p>现在，我们重新执行测试代码：</p>
+<pre><code>ApplicationContext context = new ClassPathXmlApplicationContext("spring-aop.xml");
+Battle battle = (Battle)context.getBean("Battle");
+battle.tuan();</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e89485cc6ad3628b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>再来说说万一团战失利的情况，比如露娜断大了咋办，没错，这个时候就是团战发生了异常，我们在Battle类中手动设置一个异常：</p>
+<pre><code>/**
+ * 团战类
+ * @author Administrator
+ *
+ */
+public class Battle {
+    
+    public void tuan(){
+        Luna luna = new Luna();
+        luna.say("上去开团！");
+        luna.operation();
+        
+        int i = 1 / 0 ;
+        
+    }
+    
+}</code></pre>
+<p>然后，编写TuanZhanException类，实现ThrowsAdvice接口：</p>
+<pre><code>/**
+ * 定义一个团战异常类，万一出现情况就进入这个类
+ * @author Administrator
+ *
+ */
+public class TuanZhanException implements ThrowsAdvice {
+    
+    //该方法会在露娜团战出现异常后自动执行
+    public void afterThrowing(Method method, Object[] args, 
+            Object target, Exception ex){
+        System.out.print(this.getClass().getName() + " -- ");
+        Luna luna = new Luna();
+        luna.run();
+    }
+}</code></pre>
+<p>配置到spring-aop,xml:</p>
+<pre><code>&lt;bean id = 'TuanZhanException' class="com.spring.service.TuanZhanException"&gt;&lt;/bean&gt;
+&lt;!-- 定义一个切面 --&gt;
+    &lt;aop:config&gt;
+    
+        &lt;!-- 定义所有可供露娜切入的点（方法） --&gt;
+        &lt;!-- 原则上只要时机正确，任何团战露娜都可以切进去！ --&gt;
+        &lt;aop:pointcut expression="execution(* com.spring.test.Battle.*(..))" id="pointcut"/&gt;
+        
+        &lt;aop:advisor advice-ref="BeforeTuanZhan" pointcut-ref="pointcut"/&gt;
+        &lt;aop:advisor advice-ref="AfterTuanZhan" pointcut-ref="pointcut"/&gt;
+        &lt;aop:advisor advice-ref="TuanZhanException" pointcut-ref="pointcut"/&gt;
+        
+    &lt;/aop:config&gt;</code></pre>
+<p>现在，我们重新执行测试代码：</p>
+<pre><code>ApplicationContext context = new ClassPathXmlApplicationContext("spring-aop.xml");
+Battle battle = (Battle)context.getBean("Battle");
+battle.tuan();</code></pre>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-986da048f3293971.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h3 id="总结">总结：</h3>
+<h5 id="aop面向切面切的是什么没错切的是方法">1. aop面向切面，切的是什么，没错，切的是方法！</h5>
+<h5 id="怎么切你记好了就是你先自己规定哪些方法需要切然后设置切入的方式方法执行之前做什么执行之后做什么如果方法出现异常又要做什么另外还有一种方法执行的过程中做什么只是用的比较少反正我还没有见过在哪里用了用的最多的就是发生异常后做什么比如事务管理">2. 怎么切，你记好了，就是你先自己规定哪些方法需要切，然后设置切入的方式：方法执行之前做什么，执行之后做什么，如果方法出现异常，又要做什么？另外还有一种方法执行的过程中做什么，只是用的比较少，反正我还没有见过在哪里用了。用的最多的就是发生异常后做什么，比如事务管理。</h5>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-4e093aa3466a0c93.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<h1 id="据说露娜要重做玩个屁劳资退游吃鸡去了谢谢">据说露娜要重做，玩个屁，劳资退游吃鸡去了，谢谢。</h1>
+<p>如果喜欢我的文章，还请点一波关注，谢谢老铁！</p>
+<p>源码链接：http://pan.baidu.com/s/1o8zHMqe 密码：om9i</p>
+</div>
+</body>
+</html>
+

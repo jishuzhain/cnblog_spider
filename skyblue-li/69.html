@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】 第三节 - mysql 建表
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>这一节，来给数据库中添加一些测试数据。<br/>
+登陆mysql:<br/>
+找到%xampp%\mysql\bin 目录，<br/>
+在此处打开命令窗口，用root用户登陆mysql<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-8a9967a3836c20e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>用户表建表sql：</p>
+<p>CREATE TABLE <code>tm_users</code> (<br/>
+<code>id</code> int(11) NOT NULL AUTO_INCREMENT,<br/>
+<code>username</code> varchar(255) CHARACTER SET utf8 DEFAULT NULL,<br/>
+<code>password</code> varchar(255) DEFAULT NULL,<br/>
+<code>nickname</code> varchar(255) CHARACTER SET utf8 DEFAULT NULL,<br/>
+<code>createtime</code> datetime DEFAULT NULL,<br/>
+<code>updatetime</code> datetime DEFAULT NULL,<br/>
+<code>isdelete</code> varchar(255) DEFAULT NULL,<br/>
+PRIMARY KEY (<code>id</code>)<br/>
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;</p>
+<p>复制进去，回车。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e854d12d7f34c3ab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+这样就表示建好了。</p>
+<p>部门表同理。</p>
+<p>部门表建表sql:</p>
+<p>CREATE TABLE <code>tm_dept</code> (<br/>
+<code>id</code> int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',<br/>
+<code>deptid</code> varchar(11) DEFAULT NULL COMMENT '部门编号(格式为BM_001)',<br/>
+<code>deptname</code> varchar(255) DEFAULT NULL COMMENT '部门名称',<br/>
+<code>createtime</code> datetime DEFAULT NULL COMMENT '创建时间',<br/>
+<code>updatetime</code> datetime DEFAULT NULL COMMENT '最后更新时间',<br/>
+PRIMARY KEY (<code>id</code>)<br/>
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;</p>
+<p>测试数据：<br/>
+INSERT INTO <code>tm_dept</code> VALUES ('6', 'BM_001', '科技部', '2018-04-17 13:50:21', '2018-04-17 13:50:21');<br/>
+INSERT INTO <code>tm_dept</code> VALUES ('7', 'BM_002', '财务部', '2018-04-17 13:50:59', '2018-04-17 13:50:59');<br/>
+INSERT INTO <code>tm_dept</code> VALUES ('8', 'BM_003', '炊事部', '2018-04-17 13:51:05', '2018-04-17 13:51:05');<br/>
+INSERT INTO <code>tm_dept</code> VALUES ('9', 'BM_004', '测试部', '2018-04-17 13:51:09', '2018-04-17 13:51:09');<br/>
+INSERT INTO <code>tm_dept</code> VALUES ('10', 'BM_005', '研发部', '2018-04-17 13:51:14', '2018-04-17 13:51:14');<br/>
+INSERT INTO <code>tm_dept</code> VALUES ('11', 'BM_006', '生产部', '2018-04-17 13:51:19', '2018-04-17 13:51:19');</p>
+<p>INSERT INTO <code>tm_users</code> VALUES ('14', 'zhangsan', '123', '张三', '2018-04-17 13:48:31', '2018-04-17 13:48:31', '0');<br/>
+INSERT INTO <code>tm_users</code> VALUES ('15', 'lisi', '123', '李四', '2018-04-17 13:48:52', '2018-04-17 13:48:52', '0');<br/>
+INSERT INTO <code>tm_users</code> VALUES ('16', 'wangwu', '123', '王五', '2018-04-17 13:49:01', '2018-04-17 13:49:01', '0');</p>
+<p>总之，复制进去就行啦。</p>
+</div>
+</body>
+</html>
+

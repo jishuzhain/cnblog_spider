@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+如何将MyEclipse项目导入eclipse
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>我们经常会在网上下载一些开源项目，或者从别的地方迁移一些项目进来，但经常会发现导入后各种报错。这是初学java肯定会遇到的问题，本文对一些常见的处理方案做一个总结。（本文将MyEclipse项目导入eclipse的过程为例，其他情况也可参考这个流程）</p>
+<p>这是一个用MyEclipse新建的web项目</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-ce7ec341675fcc7d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>现在，要把它导入eclipse，让我们一探究竟，到底会发生什么有趣的事情呢？</p>
+<p>打开eclipse</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-f6113cb40f9a4d23.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>在左侧项目视图的空白处右键：</p>
+<p><strong>Import -- Import -- General -- Existing Projets into Workspace</strong></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-fb53bf0e3ed1ab44.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>Next，然后选择需要导入的项目。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-c3d90fc91f9534d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>选择好之后，Finish图标会被点亮。</p>
+<p>然后点击Finish，项目就被导入进来了。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-02880e19c0096315.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>项目出现红叉，因为有些地方需要重新配置一下。</p>
+<p>首先，之前的MyEclipse中，用到的 <strong>jdk</strong> 或者 <strong>jre</strong> 十有八九是不一样的。</p>
+<p>第一件事情，就是更换成本地的 <strong>jdk</strong> 或者 <strong>jre</strong> ，在项目上右键 —— Build Path —— configure Build Path</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-7e93bfcadda7f0a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>选中JRE System Library,点击edit</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-6a0d14ececd99caa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>好了之后点Finish。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-4dcf713418bef983.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-65567568d025e5d0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-d687294a7501d2c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-e422d5b564a4562f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-1abb307cec74166a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>最后点击OK退出。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-a0becc26c2d0bbff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>现在可以看到项目里面的文件都不报错了，可是项目上还有一个红叉。</p>
+<p>找到项目所在的文件夹，打开setttings</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-14ee3c662751db4d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>用记事本打开这个org.eclipse.wst.common.project.facet.core.xml<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-64c0b56b51150265.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>把这一行删除<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-3aa43976c304f4fd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>回到eclipse，把项目刷新一下。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-cb99c631f11a34c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>这样就不报错了。</p>
+<p>如果还报错，有可能是项目的版本太高，把下面这句话中的项目版本调低一点就行了，一般2.5和3.0都是可以的。</p>
+<p></p>
+<p>如果还是不行，就只好去eclipse的problem视图查看错误信息了。</p>
+</div>
+</body>
+</html>
+

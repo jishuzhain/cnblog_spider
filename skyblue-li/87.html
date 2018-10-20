@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h2>
+【php增删改查实例】第二十五节 - 在main.php中显示头像
+</h2>
+<div class="blogpost-body cnblogs-markdown" id="cnblogs_post_body"><p>在用户成功上传头像以后，用户登录系统，应该能够看到自己的头像，本节演示如何在这个地方：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-80c476137809dec8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>添加用户头像。</p>
+<p>1.用DIV做：<br/>
+border-radius:50%<br/>
+background:url(xxx.jpg)</p>
+<p>2.用img标签做：<br/>
+border-radius:50%<br/>
+src</p>
+<p>共同点：定位</p>
+<p>为了演示，先把图片的地址写死。</p>
+<p><img height="64px" src="imageUpload%5Cupload/small_Penguins.jpg" width="64px"/></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-f64eb128447f0bb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+然后做具体的用户头像查询。</p>
+<p>在login2.php中：<br/>
+<img src="https://upload-images.jianshu.io/upload_images/1929342-519dfbce59d864ff.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>当用户登录成功后，我们已经把username存放到了session中。所以，只要用户不去关闭浏览器，用户名username就会保存在session中，又因为username唯一，所以我们在main.php查询头像的时候，不妨根据session中的username去查询。<br/>
+代码变更：</p>
+<p><img class="header_pic" height="64px" src="imageUpload%5C%3C?php%20%20echo%20$header;%20?%3E%22%20/%3E%3C/p%3E%0A%3Cp%3E%3Cimg%20src=" width="64px"/></p>
+<p>php: (在文件的顶部)</p>
+<pre><code>&lt;?php
+    session_start();
+
+    //在这里查询一下当前用户的头像
+    $username = $_SESSION["username"];
+
+    //链接数据库
+    $conn = mysql_connect("localhost","root","");
+    $db = mysql_select_db("test",$conn);
+    mysql_query("set names utf8");
+
+    $sql = "select header from tm_users where username = '$username';";
+
+
+    $rs = mysql_query($sql);
+
+    $header = null; //现在外面定义一下头像变量，否则在while循环体中就是局部变量了，外面访问不到。
+
+    while($row = mysql_fetch_array($rs)){
+
+        $header = $row["header"];
+
+
+    }
+
+?&gt;</code></pre>
+<h2 id="设置默认头像">设置默认头像</h2>
+<p>在实际的开发中，如果当前用户还没有设置头像，那么系统一般会给这个用户设置一个默认头像。<br/>
+在本系统中，我们就判断select header from tm_users where username = '$username';查询出来的头像是否为空，如果为空，就给他一个默认的头像：</p>
+<p><img alt="image.png" src="https://upload-images.jianshu.io/upload_images/1929342-d8493a8cc73a3b4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/><br/>
+地址为：imageUpload\images\header.png</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1929342-7952b3e749e0d0f3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></p>
+<p>源码获取：<a class="uri" href="https://www.jianshu.com/p/4977bd0073d5">https://www.jianshu.com/p/4977bd0073d5</a></p>
+</div>
+</body>
+</html>
+
